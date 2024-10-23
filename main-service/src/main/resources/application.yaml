@@ -1,0 +1,3 @@
+stats:
+  server:
+    uri: http://localhost:9090
