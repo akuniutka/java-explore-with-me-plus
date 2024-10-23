@@ -11,6 +11,10 @@
 
     <artifactId>explore-with-me-stats-service</artifactId>
 
+    <properties>
+        <argLine>-XX:+EnableDynamicAgentLoading -Xshare:off</argLine>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>ru.practicum</groupId>
@@ -48,7 +52,6 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-<!--            <scope>test</scope>-->
         </dependency>
     </dependencies>
 

@@ -31,6 +31,8 @@ class StatsServiceImpl implements StatsService {
     @Override
     public List<ViewStats> getViewStats(final LocalDateTime start, final LocalDateTime end, final List<String> uris,
             final boolean unique) {
+        Objects.requireNonNull(start, "Date and time to gather stats from cannot be null");
+        Objects.requireNonNull(end, "Date and time to gather stats to cannot be null");
         if (CollectionUtils.isEmpty(uris)) {
             if (unique) {
                 return repository.getUniqueHits(start, end);

@@ -8,6 +8,9 @@ import java.util.List;
 class StatsMapper {
 
     EndpointHit mapToEndpointHit(final EndpointHitDto dto) {
+        if (dto == null) {
+            return null;
+        }
         final EndpointHit endpointHit = new EndpointHit();
         endpointHit.setApp(dto.app());
         endpointHit.setUri(dto.uri());
@@ -17,6 +20,9 @@ class StatsMapper {
     }
 
     ViewStatsDto mapToDto(final ViewStats viewStats) {
+        if (viewStats == null) {
+            return null;
+        }
         return ViewStatsDto.builder()
                 .app(viewStats.getApp())
                 .uri(viewStats.getUri())
