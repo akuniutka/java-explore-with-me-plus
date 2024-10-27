@@ -3,9 +3,11 @@ package ru.practicum.ewm;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import ru.practicum.ewm.stats.EndpointHitDto;
 import ru.practicum.ewm.stats.StatsClient;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.time.temporal.ChronoUnit;
@@ -41,5 +43,10 @@ public class MainService {
         client.getStats(timestamp.minusDays(1L), timestamp.plusDays(1L), null, false);
         client.getStats(timestamp.minusDays(1L), timestamp.plusDays(1L), List.of("endpointB"), false);
         client.getStats(timestamp.minusDays(1L), timestamp.plusDays(1L), List.of("endpointB"), true);
+    }
+
+    @Bean
+    Clock clock() {
+        return Clock.systemDefaultZone();
     }
 }
