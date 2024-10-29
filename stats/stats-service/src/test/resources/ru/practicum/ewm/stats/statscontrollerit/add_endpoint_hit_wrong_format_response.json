@@ -1,7 +1,6 @@
 {
-  "type": "about:blank",
-  "title": "Internal Server Error",
-  "status": 500,
-  "detail": "Please contact site admin",
-  "instance": "/hit"
+  "status": "INTERNAL_SERVER_ERROR",
+  "reason": "Unexpected error",
+  "message": "Validation failed for argument [0] in void ru.practicum.ewm.stats.StatsController.addEndpointHit(ru.practicum.ewm.stats.EndpointHitDto,jakarta.servlet.http.HttpServletRequest): [Field error in object 'endpointHitDto' on field 'app': rejected value [null]; codes [NotBlank.endpointHitDto.app,NotBlank.app,NotBlank.java.lang.String,NotBlank]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [endpointHitDto.app,app]; arguments []; default message [app]]; default message [must not be blank]] ",
+  "timestamp": "2000-01-01 00:00:01"
 }

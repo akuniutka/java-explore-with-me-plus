@@ -3,7 +3,6 @@ package ru.practicum.ewm.stats;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,16 +12,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.ewm.common.HttpRequestResponseLogger;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
-@Slf4j
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
-class StatsController {
+class StatsController extends HttpRequestResponseLogger {
 
     private final StatsService service;
     private final StatsMapper mapper;
@@ -30,9 +28,9 @@ class StatsController {
     @PostMapping("/hit")
     @ResponseStatus(code = HttpStatus.CREATED)
     void addEndpointHit(@RequestBody @Valid final EndpointHitDto dto, final HttpServletRequest httpRequest) {
-        logRequest(httpRequest, dto);
+        logHttpRequest(httpRequest, dto);
         service.addEndpointHit(mapper.mapToEndpointHit(dto));
-        logResponse(httpRequest);
+        logHttpResponse(httpRequest);
     }
 
     @GetMapping("/stats")
@@ -43,37 +41,9 @@ class StatsController {
             @RequestParam(defaultValue = "false") final boolean unique,
             final HttpServletRequest httpRequest
     ) {
-        logRequest(httpRequest);
+        logHttpRequest(httpRequest);
         final List<ViewStatsDto> dtos = mapper.mapToDto(service.getViewStats(start, end, uris, unique));
-        logResponse(httpRequest, dtos);
+        logHttpResponse(httpRequest, dtos);
         return dtos;
-    }
-
-    private void logRequest(final HttpServletRequest httpRequest, final EndpointHitDto body) {
-        final String method = httpRequest.getMethod();
-        final String uri = httpRequest.getRequestURI();
-        final String queryString = Optional.ofNullable(httpRequest.getQueryString()).map(s -> "?" + s).orElse("");
-        log.info("Received {} at {}{}: {}", method, uri, queryString, body);
-    }
-
-    private void logRequest(final HttpServletRequest httpRequest) {
-        final String method = httpRequest.getMethod();
-        final String uri = httpRequest.getRequestURI();
-        final String queryString = Optional.ofNullable(httpRequest.getQueryString()).map(s -> "?" + s).orElse("");
-        log.info("Received {} at {}{}", method, uri, queryString);
-    }
-
-    private void logResponse(final HttpServletRequest httpRequest, final Object body) {
-        final String method = httpRequest.getMethod();
-        final String uri = httpRequest.getRequestURI();
-        final String queryString = Optional.ofNullable(httpRequest.getQueryString()).map(s -> "?" + s).orElse("");
-        log.info("Responded to {} {}{}: {}", method, uri, queryString, body);
-    }
-
-    private void logResponse(final HttpServletRequest httpRequest) {
-        final String method = httpRequest.getMethod();
-        final String uri = httpRequest.getRequestURI();
-        final String queryString = Optional.ofNullable(httpRequest.getQueryString()).map(s -> "?" + s).orElse("");
-        log.info("Responded to {} {}{} with no body", method, uri, queryString);
     }
 }
