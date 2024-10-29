@@ -1,7 +1,6 @@
-package ru.practicum.ewm.stats;
+package ru.practicum.ewm.exception;
 
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.ewm.exception.BaseExceptionHandler;
 
 import java.time.Clock;
 
