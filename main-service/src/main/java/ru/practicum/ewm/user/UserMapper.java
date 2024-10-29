@@ -6,7 +6,7 @@ import java.util.List;
 
 @Component
 public class UserMapper {
-    User mapToUser(UserRequestDto dto) {
+    User mapToUser(NewUserRequest dto) {
         if (dto == null) {
             return null;
         }
@@ -16,23 +16,33 @@ public class UserMapper {
         return user;
     }
 
-    UserResponseDto mapToDto(final User user) {
+    UserDto mapToDto(final User user) {
         if (user == null) {
             return null;
         }
-        return UserResponseDto.builder()
+        return UserDto.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
                 .build();
     }
 
-    List<UserResponseDto> mapToDto(final List<User> users) {
+    List<UserDto> mapToDto(final List<User> users) {
         if (users == null) {
             return null;
         }
         return users.stream()
                 .map(this::mapToDto)
                 .toList();
+    }
+
+    UserShortDto mapToShortDto(final User user) {
+        if (user == null) {
+            return null;
+        }
+        return UserShortDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .build();
     }
 }
