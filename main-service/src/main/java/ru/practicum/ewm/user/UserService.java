@@ -5,11 +5,11 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface UserService {
-    List<UserResponseDto> findAll(Pageable pageable);
+    List<UserDto> findAll(Pageable pageable);
 
-    List<UserResponseDto> findByIds(List<Long> ids, Pageable pageable);
+    List<UserDto> findByIds(List<Long> ids, Pageable pageable);
 
-    UserResponseDto save(UserRequestDto requestDto);
+    UserDto save(NewUserRequest requestDto);
 
     void delete(long id);
 }

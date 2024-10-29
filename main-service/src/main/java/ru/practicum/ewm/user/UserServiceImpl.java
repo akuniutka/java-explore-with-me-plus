@@ -18,28 +18,28 @@ public class UserServiceImpl implements UserService {
     private final UserMapper mapper;
 
     @Override
-    public List<UserResponseDto> findAll(final Pageable pageable) {
+    public List<UserDto> findAll(final Pageable pageable) {
         final List<User> users = userRepository.findAll(pageable).getContent();
         return mapper.mapToDto(users);
     }
 
     @Override
-    public List<UserResponseDto> findByIds(final List<Long> ids, final Pageable pageable) {
+    public List<UserDto> findByIds(final List<Long> ids, final Pageable pageable) {
         final List<User> users = userRepository.findByIdIn(ids, pageable).getContent();
         return mapper.mapToDto(users);
     }
 
     @Transactional
     @Override
-    public UserResponseDto save(final UserRequestDto requestDto) {
-        User user = mapper.mapToUser(requestDto);
+    public UserDto save(final NewUserRequest requestDto) {
+        final User user = mapper.mapToUser(requestDto);
         return mapper.mapToDto(userRepository.save(user));
     }
 
     @Transactional
     @Override
     public void delete(long id) {
-        if (userRepository.existsById(id)) {
+        if (!userRepository.existsById(id)) {
             throw new NotFoundException(User.class, id);
         }
         userRepository.deleteById(id);

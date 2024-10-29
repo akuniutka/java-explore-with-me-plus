@@ -5,6 +5,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.common.HttpRequestResponseLogger;
 
@@ -19,14 +21,14 @@ public class UserController extends HttpRequestResponseLogger {
     private final UserService userService;
 
     @GetMapping
-    public Collection<UserResponseDto> get(@RequestParam(required = false) final List<Long> ids,
-                                           @RequestParam(defaultValue = "0") final int from,
-                                           @RequestParam(defaultValue = "10") final int size,
-                                           final HttpServletRequest request) {
+    public Collection<UserDto> get(@RequestParam(required = false) final List<Long> ids,
+                                   @RequestParam(defaultValue = "0") final int from,
+                                   @RequestParam(defaultValue = "10") final int size,
+                                   final HttpServletRequest request) {
         logHttpRequest(request);
         final PageRequest pageRequest = PageRequest.of(from / size, size);
-        Collection<UserResponseDto> response;
-        if (ids == null || ids.isEmpty()) {
+        Collection<UserDto> response;
+        if (CollectionUtils.isEmpty(ids)) {
             response = userService.findAll(pageRequest);
         } else {
             response = userService.findByIds(ids, pageRequest);
@@ -36,17 +38,20 @@ public class UserController extends HttpRequestResponseLogger {
     }
 
     @PostMapping
-    public UserResponseDto save(@RequestBody @Valid final UserRequestDto requestDto,
-                                final HttpServletRequest request) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserDto save(@RequestBody @Valid final NewUserRequest requestDto,
+                        final HttpServletRequest request) {
         logHttpRequest(request, requestDto);
-        final UserResponseDto responseDto = userService.save(requestDto);
-        logHttpRequest(request, responseDto);
+        final UserDto responseDto = userService.save(requestDto);
+        logHttpResponse(request, responseDto);
         return responseDto;
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable final long id, final HttpServletRequest request) {
         logHttpRequest(request);
         userService.delete(id);
+        logHttpResponse(request);
     }
 }

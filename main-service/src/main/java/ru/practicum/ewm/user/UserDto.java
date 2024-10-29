@@ -3,7 +3,7 @@ package ru.practicum.ewm.user;
 import lombok.Builder;
 
 @Builder
-public record UserResponseDto(
+public record UserDto(
         long id,
         String email,
         String name) {
