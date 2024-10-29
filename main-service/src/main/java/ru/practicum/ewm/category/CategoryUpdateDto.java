@@ -3,7 +3,7 @@ package ru.practicum.ewm.category;
 import jakarta.validation.constraints.Size;
 import ru.practicum.ewm.validation.NotBlankOrNull;
 
-public record CategoryPatch(
+record CategoryUpdateDto(
 
         @NotBlankOrNull
         @Size(max = 50)
