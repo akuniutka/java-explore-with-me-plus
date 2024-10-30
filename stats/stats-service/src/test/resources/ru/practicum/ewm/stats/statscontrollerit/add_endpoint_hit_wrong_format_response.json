@@ -1,7 +1,7 @@
 {
   "status": "BAD_REQUEST",
   "reason": "Wrong request format",
-  "message": "There are errors in fields app, uri",
+  "message": "There are errors in fields 'app', 'uri'",
   "errors": [
     {
       "field": "app",

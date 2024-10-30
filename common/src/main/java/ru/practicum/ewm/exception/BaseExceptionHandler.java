@@ -9,6 +9,7 @@ import ru.practicum.ewm.common.HttpRequestResponseLogger;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,9 +30,11 @@ public abstract class BaseExceptionHandler extends HttpRequestResponseLogger {
         log.warn(exception.getMessage(), exception);
         final List<FieldErrorData> errors = exception.getFieldErrors().stream()
                 .map(error -> new FieldErrorData(error.getField(), error.getDefaultMessage(), error.getRejectedValue()))
+                .sorted(Comparator.comparing(FieldErrorData::field).thenComparing(FieldErrorData::error))
                 .toList();
         final Set<String> fields = errors.stream()
                 .map(FieldErrorData::field)
+                .map("'%s'"::formatted)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         final ApiError apiError = ApiError.builder()
                 .status(HttpStatus.BAD_REQUEST)
