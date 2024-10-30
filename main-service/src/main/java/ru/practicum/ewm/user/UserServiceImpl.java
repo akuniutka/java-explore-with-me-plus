@@ -18,6 +18,11 @@ public class UserServiceImpl implements UserService {
     private final UserMapper mapper;
 
     @Override
+    public User getById(final long id) {
+        return userRepository.findById(id).orElseThrow(() -> new NotFoundException(User.class, id));
+    }
+
+    @Override
     public List<UserDto> findAll(final Pageable pageable) {
         final List<User> users = userRepository.findAll(pageable).getContent();
         return mapper.mapToDto(users);
