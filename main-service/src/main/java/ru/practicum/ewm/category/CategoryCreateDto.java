@@ -1,11 +1,11 @@
 package ru.practicum.ewm.category;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import ru.practicum.ewm.validation.NotBlankOrNull;
 
-public record CategoryPatch(
+record CategoryCreateDto(
 
-        @NotBlankOrNull
+        @NotBlank
         @Size(max = 50)
         String name) {
 
