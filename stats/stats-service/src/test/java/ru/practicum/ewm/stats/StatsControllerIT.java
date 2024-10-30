@@ -99,7 +99,7 @@ class StatsControllerIT {
                         .content(requestBody))
                 .andDo(print())
                 .andExpectAll(
-                        status().isInternalServerError(),
+                        status().isBadRequest(),
                         content().contentType(MediaType.APPLICATION_JSON),
                         content().json(responseBody, true));
     }
