@@ -39,7 +39,7 @@ public class UserServiceImplUnitTest {
 
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         user1 = new User();
         user1.setId(USER_ID_1);
         user1.setName(USER_NAME_1);
