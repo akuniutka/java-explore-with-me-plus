@@ -11,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.ewm.exception.NotFoundException;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -38,7 +37,6 @@ public class UserControllerTest {
     private UserDto userDto1;
     private UserDto userDto2;
     private NewUserRequest newUserRequest;
-    private List<User> users;
     private List<UserDto> userDtos;
 
     @BeforeEach
@@ -57,7 +55,6 @@ public class UserControllerTest {
         userDto2 = UserDto.builder().id(USER_ID_2).name(USER_NAME_2).email(EMAIL_2).build();
         newUserRequest = new NewUserRequest(EMAIL_1, USER_NAME_1);
 
-        users = List.of(user1, user2);
         userDtos = List.of(userDto1, userDto2);
     }
 
@@ -86,7 +83,7 @@ public class UserControllerTest {
         mvc.perform(get("/admin/users")
                         .param("from", "-1")
                         .param("size", "10"))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -94,7 +91,7 @@ public class UserControllerTest {
         mvc.perform(get("/admin/users")
                         .param("from", "0")
                         .param("size", "0"))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -135,7 +132,7 @@ public class UserControllerTest {
                         .content(mapper.writeValueAsString(invalidRequest))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -146,7 +143,7 @@ public class UserControllerTest {
                         .content(mapper.writeValueAsString(invalidRequest))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -161,7 +158,7 @@ public class UserControllerTest {
     void testDeleteWhenNotFound() throws Exception {
         doThrow(new NotFoundException(User.class.getName(), USER_ID_1)).when(userService).delete(USER_ID_1);
         mvc.perform(delete("/admin/users/{id}", USER_ID_1))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isNotFound());
         verify(userService).delete(USER_ID_1);
     }
 }

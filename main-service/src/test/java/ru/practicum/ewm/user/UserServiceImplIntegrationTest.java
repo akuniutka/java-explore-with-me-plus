@@ -65,9 +65,9 @@ public class UserServiceImplIntegrationTest {
 
     @Test
     void testDelete() {
-        assertThat(userRepository.existsById(USER_ID_1), is(true));
-        userService.delete(USER_ID_1);
-        assertThat(userRepository.existsById(USER_ID_1), is(false));
+        assertThat(userRepository.existsById(USER_ID_2), is(true));
+        userService.delete(USER_ID_2);
+        assertThat(userRepository.existsById(USER_ID_2), is(false));
     }
 
     @Test
