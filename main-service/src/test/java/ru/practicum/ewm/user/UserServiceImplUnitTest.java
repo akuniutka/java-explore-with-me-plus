@@ -8,8 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import ru.practicum.ewm.exception.NotFoundException;
 
 import java.util.List;
@@ -18,17 +16,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
+import static ru.practicum.ewm.user.UserTestUtil.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceImplUnitTest {
-    private static final long USER_ID_1 = 1L;
-    private static final long USER_ID_2 = 2L;
-    private static final String USER_NAME_1 = "First User";
-    private static final String USER_NAME_2 = "Second User";
-    private static final String EMAIL_1 = "first@gmail.com";
-    private static final String EMAIL_2 = "second@gmail.com";
-    private static final Pageable PAGEABLE = PageRequest.of(0, 10);
-
     @Mock
     private UserRepository userRepository;
 

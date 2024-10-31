@@ -3,8 +3,6 @@ package ru.practicum.ewm.user;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.exception.NotFoundException;
 
@@ -14,21 +12,11 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static ru.practicum.ewm.user.UserTestUtil.*;
 
 @Transactional
 @SpringBootTest
 public class UserServiceImplIntegrationTest {
-    private static final long USER_ID_1 = 1L;
-    private static final long USER_ID_2 = 2L;
-    private static final long USER_ID_3 = 3L;
-    private static final String USER_NAME_1 = "First User";
-    private static final String USER_NAME_2 = "Second User";
-    private static final String USER_NAME_3 = "Third User";
-    private static final String EMAIL_1 = "first@test.com";
-    private static final String EMAIL_2 = "second@test.com";
-    private static final String EMAIL_3 = "third@test.com";
-    private static final Pageable PAGEABLE = PageRequest.of(0, 10);
-
     @Autowired
     private UserRepository userRepository;
 
