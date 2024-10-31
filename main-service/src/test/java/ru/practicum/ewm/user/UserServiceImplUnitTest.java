@@ -1,5 +1,6 @@
 package ru.practicum.ewm.user;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,13 +20,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceImplTest {
+public class UserServiceImplUnitTest {
     private static final long USER_ID_1 = 1L;
     private static final long USER_ID_2 = 2L;
     private static final String USER_NAME_1 = "First User";
     private static final String USER_NAME_2 = "Second User";
-    private static final String EMAIL_1 = "test1@gmail.com";
-    private static final String EMAIL_2 = "test2@gmail.com";
+    private static final String EMAIL_1 = "first@gmail.com";
+    private static final String EMAIL_2 = "second@gmail.com";
     private static final Pageable PAGEABLE = PageRequest.of(0, 10);
 
     @Mock
@@ -54,9 +55,9 @@ public class UserServiceImplTest {
         user1.setEmail(EMAIL_1);
 
         user2 = new User();
-        user1.setId(USER_ID_2);
-        user1.setName(USER_NAME_2);
-        user1.setEmail(EMAIL_2);
+        user2.setId(USER_ID_2);
+        user2.setName(USER_NAME_2);
+        user2.setEmail(EMAIL_2);
 
         userDto1 = UserDto.builder().id(USER_ID_1).name(USER_NAME_1).email(EMAIL_1).build();
         userDto2 = UserDto.builder().id(USER_ID_2).name(USER_NAME_2).email(EMAIL_2).build();
@@ -64,6 +65,11 @@ public class UserServiceImplTest {
 
         users = List.of(user1, user2);
         userDtos = List.of(userDto1, userDto2);
+    }
+
+    @AfterEach
+    void tearDown() {
+        verifyNoMoreInteractions(userRepository, mapper);
     }
 
     @Test
@@ -77,7 +83,6 @@ public class UserServiceImplTest {
 
         verify(userRepository).findAll(PAGEABLE);
         verify(mapper).mapToDto(users);
-        verifyNoMoreInteractions(userRepository, mapper);
     }
 
     @Test
@@ -93,7 +98,6 @@ public class UserServiceImplTest {
 
         verify(userRepository).findByIdIn(ids, PAGEABLE);
         verify(mapper).mapToDto(users);
-        verifyNoMoreInteractions(userRepository, mapper);
     }
 
     @Test
@@ -109,7 +113,6 @@ public class UserServiceImplTest {
         verify(mapper).mapToUser(newUserRequest);
         verify(userRepository).save(user1);
         verify(mapper).mapToDto(user1);
-        verifyNoMoreInteractions(userRepository, mapper);
     }
 
     @Test
@@ -119,7 +122,6 @@ public class UserServiceImplTest {
         userService.delete(USER_ID_1);
 
         verify(userRepository).deleteById(USER_ID_1);
-        verifyNoMoreInteractions(userRepository, mapper);
     }
 
     @Test
@@ -127,10 +129,9 @@ public class UserServiceImplTest {
         when(userRepository.existsById(USER_ID_1)).thenReturn(false);
 
         NotFoundException e = assertThrows(NotFoundException.class, () -> userService.delete(USER_ID_1));
-        assertThat(e.getMessage(), is("User with id = 1 not found"));
+        assertThat(e.getMessage(), is("User with id = " + USER_ID_1 + " not found"));
 
         verify(userRepository).existsById(USER_ID_1);
         verify(userRepository, never()).deleteById(anyLong());
-        verifyNoMoreInteractions(userRepository, mapper);
     }
 }
