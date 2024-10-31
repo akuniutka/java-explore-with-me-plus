@@ -99,7 +99,7 @@ class StatsControllerIT {
                         .content(requestBody))
                 .andDo(print())
                 .andExpectAll(
-                        status().isInternalServerError(),
+                        status().isBadRequest(),
                         content().contentType(MediaType.APPLICATION_JSON),
                         content().json(responseBody, true));
     }
@@ -132,7 +132,7 @@ class StatsControllerIT {
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpectAll(
-                        status().isInternalServerError(),
+                        status().isBadRequest(),
                         content().contentType(MediaType.APPLICATION_JSON),
                         content().json(responseBody, true));
     }
@@ -145,7 +145,7 @@ class StatsControllerIT {
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpectAll(
-                        status().isInternalServerError(),
+                        status().isBadRequest(),
                         content().contentType(MediaType.APPLICATION_JSON),
                         content().json(responseBody, true));
     }

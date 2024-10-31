@@ -1,6 +1,7 @@
 package ru.practicum.ewm.category;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 
@@ -8,15 +9,15 @@ import java.util.List;
 
 public interface CategoryService {
 
-    Category createCategory(@Valid Category category);
+    Category add(@NotNull @Valid Category category);
 
-    Category getCategory(long id);
+    Category getById(long id);
 
-    List<Category> getCategories(@PositiveOrZero int from, @Positive int size);
+    List<Category> getAllInWindow(@Positive int windowSize, @PositiveOrZero int windowIndex);
 
-    Category patchCategory(@Valid CategoryPatch patch);
+    Category update(long id, @NotNull @Valid CategoryPatch patch);
 
-    void deleteCategory(long id);
+    void removeById(long id);
 
-    boolean categoryExists(long id);
+    boolean containsById(long id);
 }

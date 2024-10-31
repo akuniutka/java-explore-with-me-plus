@@ -16,6 +16,15 @@ public class UserMapper {
         return user;
     }
 
+    public User mapToUser(final Long id) {
+        if (id == null) {
+            return null;
+        }
+        final User user = new User();
+        user.setId(id);
+        return user;
+    }
+
     UserDto mapToDto(final User user) {
         if (user == null) {
             return null;
@@ -36,7 +45,7 @@ public class UserMapper {
                 .toList();
     }
 
-    UserShortDto mapToShortDto(final User user) {
+    public UserShortDto mapToShortDto(final User user) {
         if (user == null) {
             return null;
         }
