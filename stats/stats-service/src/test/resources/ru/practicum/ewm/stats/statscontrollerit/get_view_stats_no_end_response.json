@@ -1,6 +1,13 @@
 {
-  "status": "INTERNAL_SERVER_ERROR",
-  "reason": "Unexpected error",
-  "message": "Required request parameter 'end' for method parameter type LocalDateTime is not present",
+  "status": "BAD_REQUEST",
+  "reason": "Wrong request format",
+  "message": "There is an error in parameter 'end'",
+  "errors": [
+    {
+      "field": "end",
+      "error": "no value provided",
+      "value": null
+    }
+  ],
   "timestamp": "2000-01-01 00:00:01"
 }
