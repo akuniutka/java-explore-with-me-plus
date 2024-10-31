@@ -24,6 +24,16 @@ class CategoryMapperImpl implements CategoryMapper {
     }
 
     @Override
+    public Category mapToCategory(final Long id) {
+        if (id == null) {
+            return null;
+        }
+        final Category category = new Category();
+        category.setId(id);
+        return category;
+    }
+
+    @Override
     public CategoryDto mapToDto(final Category category) {
         if (category == null) {
             return null;
