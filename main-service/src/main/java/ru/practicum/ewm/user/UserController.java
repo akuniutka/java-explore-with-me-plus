@@ -2,6 +2,8 @@ package ru.practicum.ewm.user;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -22,8 +24,8 @@ public class UserController extends HttpRequestResponseLogger {
 
     @GetMapping
     public Collection<UserDto> get(@RequestParam(required = false) final List<Long> ids,
-                                   @RequestParam(defaultValue = "0") final int from,
-                                   @RequestParam(defaultValue = "10") final int size,
+                                   @RequestParam(defaultValue = "0") @PositiveOrZero final int from,
+                                   @RequestParam(defaultValue = "10") @Positive final int size,
                                    final HttpServletRequest request) {
         logHttpRequest(request);
         final PageRequest pageRequest = PageRequest.of(from / size, size);
