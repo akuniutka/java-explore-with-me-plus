@@ -1,34 +1,29 @@
 package ru.practicum.ewm.event;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
+import ru.practicum.ewm.category.Category;
+import ru.practicum.ewm.validation.NotBlankOrNull;
 
 import java.time.LocalDateTime;
 
-record NewEventDto(
+@Builder
+public record EventPatch(
 
-        @NotBlank
+        @NotBlankOrNull
         @Size(min = 3, max = 120)
         String title,
 
-        @NotNull
-        Long category,
-
-        @NotNull
-        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        Category category,
         LocalDateTime eventDate,
-
-        @NotNull
         Location location,
 
-        @NotBlank
+        @NotBlankOrNull
         @Size(min = 20, max = 2000)
         String annotation,
 
-        @NotBlank
+        @NotBlankOrNull
         @Size(min = 20, max = 7000)
         String description,
 
@@ -36,6 +31,8 @@ record NewEventDto(
         Integer participantLimit,
 
         Boolean paid,
-        Boolean requestModeration) {
+        Boolean requestModeration,
+        EventState state
+) {
 
 }

@@ -35,6 +35,16 @@ class ControllerExceptionHandler extends BaseExceptionHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<Object> handleFieldValidationException(
+            final FieldValidationException exception,
+            final HttpServletRequest httpRequest) {
+        log.warn(exception.getMessage());
+        final List<FieldErrorData> errors = List.of(new FieldErrorData(exception.getField(), exception.getError(),
+                exception.getValue()));
+        return handleFieldErrorDataInternally(ParameterType.FIELD, errors, httpRequest);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<Object> handleDatabaseConstraintViolation(
             final DataIntegrityViolationException exception,
             final HttpServletRequest httpRequest) {
@@ -42,6 +52,21 @@ class ControllerExceptionHandler extends BaseExceptionHandler {
         final ApiError apiError = ApiError.builder()
                 .status(HttpStatus.CONFLICT)
                 .reason("Integrity constraint has been violated")
+                .message(exception.getMessage())
+                .timestamp(LocalDateTime.now(clock))
+                .build();
+        logHttpResponse(httpRequest, apiError);
+        return new ResponseEntity<>(apiError, apiError.status());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Object> handleNotPossibleException(
+            final NotPossibleException exception,
+            final HttpServletRequest httpRequest) {
+        log.warn(exception.getMessage());
+        final ApiError apiError = ApiError.builder()
+                .status(HttpStatus.CONFLICT)
+                .reason("For the requested operation the conditions are not met")
                 .message(exception.getMessage())
                 .timestamp(LocalDateTime.now(clock))
                 .build();

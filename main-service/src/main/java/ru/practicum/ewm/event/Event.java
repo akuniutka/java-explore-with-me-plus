@@ -13,6 +13,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -58,7 +59,9 @@ public class Event {
     @Size(min = 20, max = 7000)
     private String description;
 
+    @PositiveOrZero
     private int participantLimit;
+
     private boolean paid;
     private boolean requestModeration;
 
