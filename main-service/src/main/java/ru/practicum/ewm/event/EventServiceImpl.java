@@ -23,10 +23,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -80,6 +77,14 @@ class EventServiceImpl implements EventService {
             throw new NotFoundException(Event.class, id);
         }
         return event;
+    }
+
+    @Override
+    public List<Event> getByIds(final List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return repository.findByIdIn(ids);
     }
 
     @Override
