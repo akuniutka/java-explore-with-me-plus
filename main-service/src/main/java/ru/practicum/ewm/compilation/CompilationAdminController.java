@@ -15,10 +15,19 @@ public class CompilationAdminController extends HttpRequestResponseLogger {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CompilationDto save(@RequestBody @Valid NewCompilationDto requestDto, final HttpServletRequest request) {
+    public CompilationDto save(@RequestBody @Valid final NewCompilationDto requestDto,
+                               final HttpServletRequest request) {
         logHttpRequest(request);
         final CompilationDto responseDto = compilationService.save(requestDto);
         logHttpResponse(request, responseDto);
         return responseDto;
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable final long id, final HttpServletRequest request) {
+        logHttpRequest(request);
+
+        logHttpResponse(request);
     }
 }

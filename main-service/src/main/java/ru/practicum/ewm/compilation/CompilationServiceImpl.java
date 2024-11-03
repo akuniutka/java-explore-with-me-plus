@@ -21,4 +21,9 @@ public class CompilationServiceImpl implements CompilationService {
         final Compilation compilation = mapper.mapToCompilation(requestDto, relatedEvents);
         return mapper.mapToDto(repository.save(compilation));
     }
+
+    @Override
+    public void delete(long id) {
+
+    }
 }

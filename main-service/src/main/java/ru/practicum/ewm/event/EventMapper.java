@@ -76,6 +76,7 @@ public class EventMapper {
                 .participantLimit(dto.participantLimit())
                 .paid(dto.paid())
                 .requestModeration(dto.requestModeration())
+                //TODO: убрать коменты перед PR
 //                .state(
 //                        switch (dto.stateAction()) {
 //                            case SEND_TO_REVIEW -> EventState.PENDING;
