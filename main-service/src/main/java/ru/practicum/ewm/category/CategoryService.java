@@ -18,6 +18,4 @@ public interface CategoryService {
     Category update(long id, @NotNull @Valid CategoryPatch patch);
 
     void removeById(long id);
-
-    boolean containsById(long id);
 }

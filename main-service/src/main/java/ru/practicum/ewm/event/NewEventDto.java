@@ -33,7 +33,7 @@ record NewEventDto(
         String description,
 
         @PositiveOrZero
-        Integer participantLimit,
+        Long participantLimit,
 
         Boolean paid,
         Boolean requestModeration) {
