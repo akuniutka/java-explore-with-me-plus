@@ -52,13 +52,14 @@ public class EventMapper {
                 .participantLimit(dto.participantLimit())
                 .paid(dto.paid())
                 .requestModeration(dto.requestModeration())
-                .state(
-                        switch (dto.stateAction()) {
-                            case PUBLISH_EVENT -> EventState.PUBLISHED;
-                            case REJECT_EVENT -> EventState.CANCELED;
-                            case null -> null;
-                        }
-                )
+                //TODO: убрать коменты перед PR
+//                .state(
+//                        switch (dto.stateAction()) {
+//                            case PUBLISH_EVENT -> EventState.PUBLISHED;
+//                            case REJECT_EVENT -> EventState.CANCELED;
+//                            case null -> null;
+//                        }
+//                )
                 .build();
     }
 

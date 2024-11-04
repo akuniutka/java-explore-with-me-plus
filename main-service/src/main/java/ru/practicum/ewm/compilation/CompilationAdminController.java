@@ -27,7 +27,7 @@ public class CompilationAdminController extends HttpRequestResponseLogger {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable final long id, final HttpServletRequest request) {
         logHttpRequest(request);
-
+        compilationService.delete(id);
         logHttpResponse(request);
     }
 }
