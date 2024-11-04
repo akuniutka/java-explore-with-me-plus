@@ -9,7 +9,7 @@ public interface EventService {
 
     Event add(@NotNull @Valid Event event);
 
-    Event getPublishedById(long id);
+    Event getById(long id);
 
     Event getByIdAndUserId(long id, long userId);
 

@@ -3,20 +3,21 @@ package ru.practicum.ewm.event;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
+import ru.practicum.ewm.category.Category;
+import ru.practicum.ewm.category.CategoryService;
 import ru.practicum.ewm.exception.FieldValidationException;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.exception.NotPossibleException;
 import ru.practicum.ewm.exception.ParameterValidationException;
-import ru.practicum.ewm.request.RequestService;
-import ru.practicum.ewm.request.RequestStats;
 import ru.practicum.ewm.stats.StatsClient;
 import ru.practicum.ewm.stats.ViewStatsDto;
+import ru.practicum.ewm.user.User;
+import ru.practicum.ewm.user.UserService;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -43,19 +44,17 @@ class EventServiceImpl implements EventService {
     private static final Duration USER_TIME_LIMIT = Duration.ofHours(2L);
 
     private final Clock clock;
+    private final UserService userService;
+    private final CategoryService categoryService;
     private final StatsClient statsClient;
     private final EventRepository repository;
-    private RequestService requestService;
-
-    @Autowired
-    public void setRequestService(final RequestService requestService) {
-        this.requestService = requestService;
-    }
 
     @Override
     @Transactional
     public Event add(final Event event) {
         validateEventDate(event.getEventDate(), USER_TIME_LIMIT);
+        event.setInitiator(fetchUser(event.getInitiator()));
+        event.setCategory(fetchCategory(event.getCategory()));
         final long id = repository.save(event).getId();
         final Event savedEvent = getByIdInternally(id);
         log.info("Added event with id = {}: {}", savedEvent.getId(), savedEvent);
@@ -63,7 +62,7 @@ class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Event getPublishedById(long id) {
+    public Event getById(long id) {
         return repository.findByIdAndState(id, EventState.PUBLISHED)
                 .map(this::fetchConfirmedRequestsAndHits)
                 .orElseThrow(() -> new NotFoundException(Event.class, id));
@@ -105,6 +104,7 @@ class EventServiceImpl implements EventService {
 
         if (Boolean.TRUE.equals(filter.onlyAvailable())) {
             events.removeIf(foundEvent -> foundEvent.getParticipantLimit() > 0L
+                    && foundEvent.isRequestModeration()
                     && foundEvent.getParticipantLimit() - foundEvent.getConfirmedRequests() <= 0L);
         }
 
@@ -172,14 +172,11 @@ class EventServiceImpl implements EventService {
         final List<Long> ids = events.stream()
                 .map(Event::getId)
                 .toList();
-        final Map<Long, Long> confirmedRequests = requestService.getConfirmedRequestStats(ids).stream()
-                .collect(Collectors.toMap(RequestStats::getEventId, RequestStats::getRequestCount));
         final List<String> uris = ids.stream()
                 .map(id -> "/events/" + id)
                 .toList();
         final Map<String, Long> views = statsClient.getStats(VIEWS_FROM, VIEWS_TO, uris, true).stream()
                 .collect(Collectors.toMap(ViewStatsDto::uri, ViewStatsDto::hits));
-        events.forEach(event -> event.setConfirmedRequests(confirmedRequests.getOrDefault(event.getId(), 0L)));
         events.forEach(event -> event.setViews(views.getOrDefault("/events/" + event.getId(), 0L)));
     }
 
@@ -201,7 +198,7 @@ class EventServiceImpl implements EventService {
 
     private void applyPatch(final Event event, final EventPatch patch) {
         Optional.ofNullable(patch.title()).ifPresent(event::setTitle);
-        Optional.ofNullable(patch.category()).ifPresent(event::setCategory);
+        Optional.ofNullable(patch.category()).map(this::fetchCategory).ifPresent(event::setCategory);
         Optional.ofNullable(patch.eventDate()).ifPresent(event::setEventDate);
         Optional.ofNullable(patch.location()).ifPresent(event::setLocation);
         Optional.ofNullable(patch.annotation()).ifPresent(event::setAnnotation);
@@ -210,5 +207,19 @@ class EventServiceImpl implements EventService {
         Optional.ofNullable(patch.paid()).ifPresent(event::setPaid);
         Optional.ofNullable(patch.requestModeration()).ifPresent(event::setRequestModeration);
         Optional.ofNullable(patch.state()).ifPresent(event::setState);
+    }
+
+    private User fetchUser(final User user) {
+        if (user == null || user.getId() == null) {
+            throw new AssertionError();
+        }
+        return userService.getById(user.getId());
+    }
+
+    private Category fetchCategory(final Category category) {
+        if (category == null || category.getId() == null) {
+            throw new AssertionError();
+        }
+        return categoryService.getById(category.getId());
     }
 }
