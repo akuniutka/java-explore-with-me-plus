@@ -41,7 +41,7 @@ class RequestServiceImpl implements RequestService {
 
     @Override
     public RequestDto create(long userId, long eventId) {
-        if (!requestRepository.findAllByUserIdAndEventId(userId, eventId).isEmpty())
+        if (!requestRepository.findAllByRequesterIdAndEventId(userId, eventId).isEmpty())
             throw new NotPossibleException("Request already exists");
         User user = userService.getById(userId);
         Event event = eventService.getById(eventId);
@@ -65,7 +65,7 @@ class RequestServiceImpl implements RequestService {
     @Override
     public List<RequestDto> getAllRequestByUserId(final long userId) {
         userService.getById(userId);
-        return requestRepository.findAllByUserId(userId).stream()
+        return requestRepository.findAllByRequesterId(userId).stream()
                 .map(RequestMapper::mapToRequestDto)
                 .toList();
     }
