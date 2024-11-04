@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS events
     lon                REAL,
     annotation         VARCHAR(2000)               NOT NULL,
     description        VARCHAR(7000)               NOT NULL,
-    participant_limit  INT                         NOT NULL,
+    participant_limit  BIGINT                      NOT NULL,
     paid               BOOLEAN                     NOT NULL,
     request_moderation BOOLEAN                     NOT NULL,
     created_on         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
