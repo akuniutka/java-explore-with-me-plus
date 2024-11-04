@@ -36,7 +36,7 @@ class EventPublicController extends HttpRequestResponseLogger {
             @PathVariable final long eventId,
             final HttpServletRequest httpRequest) {
         logHttpRequest(httpRequest);
-        final EventFullDto dto = mapper.mapToFullDto(events.getPublishedById(eventId));
+        final EventFullDto dto = mapper.mapToFullDto(events.getById(eventId));
         statsClient.saveHit(new EndpointHitDto(APP, httpRequest.getRequestURI(), httpRequest.getRemoteAddr(),
                 LocalDateTime.now(clock).truncatedTo(ChronoUnit.SECONDS)));
         logHttpResponse(httpRequest, dto);
@@ -69,7 +69,7 @@ class EventPublicController extends HttpRequestResponseLogger {
                 .size(size)
                 .build();
         final List<EventShortDto> dtos = mapper.mapToDto(events.get(filter));
-        logHttpResponse(httpRequest);
+        logHttpResponse(httpRequest, dtos);
         return dtos;
     }
 }

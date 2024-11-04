@@ -59,7 +59,7 @@ class EventAdminController extends HttpRequestResponseLogger {
                 .size(size)
                 .build();
         final List<EventFullDto> dtos = mapper.mapToFullDto(events.get(filter));
-        logHttpResponse(httpRequest);
+        logHttpResponse(httpRequest, dtos);
         return dtos;
     }
 }
