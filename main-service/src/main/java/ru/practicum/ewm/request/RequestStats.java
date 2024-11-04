@@ -7,5 +7,5 @@ public class RequestStats {
 
     private long eventId;
 
-    private long RequestCount;
+    private long requestCount;
 }
