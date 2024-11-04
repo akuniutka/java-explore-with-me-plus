@@ -1,8 +1,11 @@
 package ru.practicum.ewm.request;
 
-public interface RequestStats {
+import lombok.Data;
 
-    Long getEventId();
+@Data
+public class RequestStats {
 
-    Long getRequestCount();
+    private long eventId;
+
+    private long RequestCount;
 }
