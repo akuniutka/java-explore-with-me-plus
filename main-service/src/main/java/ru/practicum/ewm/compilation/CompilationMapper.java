@@ -34,4 +34,11 @@ public class CompilationMapper {
                 .title(compilation.getTitle())
                 .build();
     }
+
+    List<CompilationDto> mapToDtos(final List<Compilation> compilations) {
+        if (compilations == null) {
+            return null;
+        }
+        return compilations.stream().map(this::mapToDto).toList();
+    }
 }
