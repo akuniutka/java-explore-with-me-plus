@@ -15,8 +15,6 @@ public interface EventService {
 
     List<Event> get(@NotNull @Valid EventFilter filter);
 
-    List<Event> getByIds(List<Long> ids);
-
     Event update(long id, @NotNull @Valid EventPatch patch);
 
     Event update(long id, @NotNull @Valid EventPatch patch, long userId);

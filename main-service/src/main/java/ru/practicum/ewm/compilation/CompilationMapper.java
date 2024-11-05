@@ -6,13 +6,15 @@ import ru.practicum.ewm.event.Event;
 import ru.practicum.ewm.event.EventMapper;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class CompilationMapper {
     private final EventMapper eventMapper;
 
-    Compilation mapToCompilation(final NewCompilationDto dto, final List<Event> events) {
+    Compilation mapToCompilation(final NewCompilationDto dto, final Set<Event> events) {
         if (dto == null) {
             return null;
         }
@@ -29,13 +31,14 @@ public class CompilationMapper {
         }
         return CompilationDto.builder()
                 .id(compilation.getId())
-                .events(compilation.getEvents().stream().map(eventMapper::mapToDto).toList())
+                .events(compilation.getEvents() == null ? null :
+                        compilation.getEvents().stream().map(eventMapper::mapToDto).collect(Collectors.toSet()))
                 .pinned(compilation.getPinned())
                 .title(compilation.getTitle())
                 .build();
     }
 
-    List<CompilationDto> mapToDtos(final List<Compilation> compilations) {
+    List<CompilationDto> mapToDto(final List<Compilation> compilations) {
         if (compilations == null) {
             return null;
         }

@@ -53,14 +53,13 @@ public class EventMapper {
                 .participantLimit(dto.participantLimit())
                 .paid(dto.paid())
                 .requestModeration(dto.requestModeration())
-                //TODO: убрать коменты перед PR
-//                .state(
-//                        switch (dto.stateAction()) {
-//                            case PUBLISH_EVENT -> EventState.PUBLISHED;
-//                            case REJECT_EVENT -> EventState.CANCELED;
-//                            case null -> null;
-//                        }
-//                )
+                .state(
+                        switch (dto.stateAction()) {
+                            case PUBLISH_EVENT -> EventState.PUBLISHED;
+                            case REJECT_EVENT -> EventState.CANCELED;
+                            case null -> null;
+                        }
+                )
                 .build();
     }
 
@@ -78,14 +77,13 @@ public class EventMapper {
                 .participantLimit(dto.participantLimit())
                 .paid(dto.paid())
                 .requestModeration(dto.requestModeration())
-                //TODO: убрать коменты перед PR
-//                .state(
-//                        switch (dto.stateAction()) {
-//                            case SEND_TO_REVIEW -> EventState.PENDING;
-//                            case CANCEL_REVIEW -> EventState.CANCELED;
-//                            case null -> null;
-//                        }
-//                )
+                .state(
+                        switch (dto.stateAction()) {
+                            case SEND_TO_REVIEW -> EventState.PENDING;
+                            case CANCEL_REVIEW -> EventState.CANCELED;
+                            case null -> null;
+                        }
+                )
                 .build();
     }
 

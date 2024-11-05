@@ -3,9 +3,11 @@ package ru.practicum.ewm.compilation;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import ru.practicum.ewm.event.Event;
 
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "compilations")
@@ -17,16 +19,17 @@ public class Compilation {
     private Long id;
 
     @ManyToMany(fetch = FetchType.LAZY)
+    @Fetch(FetchMode.SUBSELECT)
     @JoinTable(
             name = "compilation_event",
             joinColumns = @JoinColumn(name = "compilation_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id")
     )
-    private List<Event> events;
+    private Set<Event> events;
 
-    @Column(name = "pinned")
+    @Column(name = "pinned", nullable = false)
     private Boolean pinned;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
 }

@@ -3,12 +3,12 @@ package ru.practicum.ewm.compilation;
 import lombok.Builder;
 import ru.practicum.ewm.event.EventShortDto;
 
-import java.util.List;
+import java.util.Set;
 
 @Builder
 public record CompilationDto(
-        List<EventShortDto> events,
+        Set<EventShortDto> events,
         Long id,
-        Boolean pinned,
+        boolean pinned,
         String title) {
 }
