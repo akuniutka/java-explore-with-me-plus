@@ -1,11 +1,11 @@
 package ru.practicum.ewm.request;
 
-import lombok.experimental.UtilityClass;
+final public class RequestMapper {
 
-@UtilityClass
-public class RequestMapper {
+    private RequestMapper() {
+    }
 
-    RequestDto mapToRequestDto(Request request) {
+    static RequestDto mapToRequestDto(Request request) {
         return RequestDto.builder()
                 .requester(request.getRequester().getId())
                 .id(request.getId())

@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 @Builder(toBuilder = true)
 record RequestDto(
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
         LocalDateTime created,
 
         long event,

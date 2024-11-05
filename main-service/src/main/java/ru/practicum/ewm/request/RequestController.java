@@ -2,39 +2,39 @@ package ru.practicum.ewm.request;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.common.HttpRequestResponseLogger;
 import java.util.Collection;
 
-@Slf4j
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/users/{userId}/requests")
 @RequiredArgsConstructor
 public class RequestController extends HttpRequestResponseLogger {
     private final RequestService requestService;
 
-    @GetMapping("/{userId}/requests")
+    @GetMapping
     Collection<RequestDto> get(@PathVariable final long userId, final HttpServletRequest httpRequest) {
+        logHttpRequest(httpRequest);
         Collection<RequestDto> response = requestService.getAllRequestByUserId(userId);
         logHttpResponse(httpRequest, response);
         return response;
     }
 
-    @PostMapping("/{userId}/requests")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    RequestDto save(@PathVariable final long userId, @RequestParam int eventId, final HttpServletRequest httpRequest) {
+    RequestDto save(@PathVariable final long userId, @RequestParam long eventId, final HttpServletRequest httpRequest) {
+        logHttpRequest(httpRequest);
         final RequestDto requestDto = requestService.create(userId, eventId);
         logHttpResponse(httpRequest, requestDto);
         return requestDto;
     }
 
-    @PatchMapping("/{userId}/requests/{requestId}/cancel")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    RequestDto delete(@PathVariable final long userId, @PathVariable int requestId, final HttpServletRequest request) {
+    @PatchMapping("/{requestId}/cancel")
+    @ResponseStatus
+    RequestDto delete(@PathVariable final long userId, @PathVariable long requestId, final HttpServletRequest request) {
         logHttpRequest(request);
-        RequestDto requestDto = requestService.delete(userId, requestId);
+        RequestDto requestDto = requestService.cancel(userId, requestId);
         logHttpResponse(request, requestDto);
         return requestDto;
     }
