@@ -1,8 +1,10 @@
 package ru.practicum.ewm.event;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -11,8 +13,7 @@ import ru.practicum.ewm.category.CategoryService;
 import ru.practicum.ewm.exception.FieldValidationException;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.exception.NotPossibleException;
-import ru.practicum.ewm.request.RequestService;
-import ru.practicum.ewm.request.RequestStats;
+import ru.practicum.ewm.exception.ParameterValidationException;
 import ru.practicum.ewm.stats.StatsClient;
 import ru.practicum.ewm.stats.ViewStatsDto;
 import ru.practicum.ewm.user.User;
@@ -23,7 +24,11 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,12 +48,6 @@ class EventServiceImpl implements EventService {
     private final CategoryService categoryService;
     private final StatsClient statsClient;
     private final EventRepository repository;
-    private RequestService requestService;
-
-    @Autowired
-    public void setRequestService(final RequestService requestService) {
-        this.requestService = requestService;
-    }
 
     @Override
     @Transactional
@@ -56,35 +55,66 @@ class EventServiceImpl implements EventService {
         validateEventDate(event.getEventDate(), USER_TIME_LIMIT);
         event.setInitiator(fetchUser(event.getInitiator()));
         event.setCategory(fetchCategory(event.getCategory()));
-        final Event savedEvent = repository.save(event);
+        final long id = repository.save(event).getId();
+        final Event savedEvent = getByIdInternally(id);
         log.info("Added event with id = {}: {}", savedEvent.getId(), savedEvent);
         return savedEvent;
     }
 
     @Override
     public Event getById(long id) {
-        final Event event = getByIdInternally(id);
-        if (event.getState() != EventState.PUBLISHED) {
-            throw new NotFoundException(Event.class, id);
-        }
-        return event;
+        return repository.findByIdAndState(id, EventState.PUBLISHED)
+                .map(this::fetchConfirmedRequestsAndHits)
+                .orElseThrow(() -> new NotFoundException(Event.class, id));
     }
 
     @Override
-    public Event getById(final long id, final long userId) {
-        final Event event = getByIdInternally(id);
-        if (!Objects.equals(event.getInitiator().getId(), userId)) {
-            throw new NotFoundException(Event.class, id);
-        }
-        return event;
+    public Event getByIdAndUserId(final long id, final long userId) {
+        return repository.findByIdAndInitiatorId(id, userId)
+                .map(this::fetchConfirmedRequestsAndHits)
+                .orElseThrow(() -> new NotFoundException(Event.class, id));
     }
 
     @Override
-    public List<Event> getByIds(final List<Long> ids) {
-        if (ids == null || ids.isEmpty()) {
-            return Collections.emptyList();
+    public List<Event> get(final EventFilter filter) {
+        if (filter.rangeStart() != null && filter.rangeEnd() != null
+                && filter.rangeEnd().isBefore(filter.rangeStart())) {
+            throw new ParameterValidationException("rangeEnd", "must be after or equal to 'rangeStart'",
+                    filter.rangeEnd());
         }
-        return repository.findByIdIn(ids);
+        final List<BooleanExpression> predicates = new ArrayList<>();
+        final QEvent event = new QEvent("event");
+        Optional.ofNullable(filter.text()).ifPresent(text -> predicates.add(event.annotation.likeIgnoreCase(text)
+                .or(event.description.likeIgnoreCase(text))));
+        Optional.ofNullable(filter.users()).ifPresent(users -> predicates.add(event.initiator.id.in(users)));
+        Optional.ofNullable(filter.categories()).ifPresent(categories ->
+                predicates.add(event.category.id.in(categories)));
+        Optional.ofNullable(filter.states()).ifPresent(states -> predicates.add(event.state.in(states)));
+        Optional.ofNullable(filter.paid()).ifPresent(paid -> predicates.add(event.paid.eq(paid)));
+        Optional.ofNullable(filter.rangeStart()).ifPresent(start -> predicates.add(event.eventDate.goe(start)));
+        Optional.ofNullable(filter.rangeEnd()).ifPresent(end -> predicates.add(event.eventDate.loe(end)));
+        final Optional<BooleanExpression> where = predicates.stream().reduce(BooleanExpression::and);
+
+        // TODO: refactor pagination, sorting, filtering by slots available when event stores views and requests data
+        final Pageable page = PageRequest.of(filter.from() / filter.size(), filter.size());
+        final List<Event> events = new ArrayList<>(where.map(w -> repository.findAll(w, page))
+                .orElseGet(() -> repository.findAll(page))
+                .getContent());
+        fetchConfirmedRequestsAndHits(events);
+
+        if (Boolean.TRUE.equals(filter.onlyAvailable())) {
+            events.removeIf(foundEvent -> foundEvent.getParticipantLimit() > 0L
+                    && foundEvent.isRequestModeration()
+                    && foundEvent.getParticipantLimit() - foundEvent.getConfirmedRequests() <= 0L);
+        }
+
+        if (filter.sort() == EventSort.EVENT_DATE) {
+            events.sort(Comparator.comparing(Event::getEventDate));
+        } else if (filter.sort() == EventSort.VIEWS) {
+            events.sort(Comparator.comparing(Event::getViews).reversed());
+        }
+
+        return events;
     }
 
     @Override
@@ -99,19 +129,14 @@ class EventServiceImpl implements EventService {
             throw new NotPossibleException("Event date must be not earlier than in %s from now"
                     .formatted(USER_TIME_LIMIT));
         }
-        applyPatch(event, patch);
-        if (event.getState() == EventState.PUBLISHED) {
-            event.setPublishedOn(now());
-        }
-        repository.save(event);
-        return event;
+        return updateInternally(event, patch);
     }
 
     @Override
     @Transactional
     public Event update(final long id, final EventPatch patch, final long userId) {
         validateEventDate(patch.eventDate(), USER_TIME_LIMIT);
-        final Event event = getById(id, userId);
+        final Event event = getByIdAndUserId(id, userId);
         if (event.getState() == EventState.PUBLISHED) {
             throw new NotPossibleException("Only pending or canceled events can be changed");
         }
@@ -119,9 +144,7 @@ class EventServiceImpl implements EventService {
             throw new NotPossibleException("Event date must be not earlier than in %s from now"
                     .formatted(USER_TIME_LIMIT));
         }
-        applyPatch(event, patch);
-        repository.save(event);
-        return event;
+        return updateInternally(event, patch);
     }
 
     private void validateEventDate(final LocalDateTime eventDate, final Duration timeLimit) {
@@ -140,16 +163,37 @@ class EventServiceImpl implements EventService {
     }
 
     private Event getByIdInternally(final long id) {
-        final Event event = repository.findByIdWithRelations(id)
+        return repository.findById(id)
+                .map(this::fetchConfirmedRequestsAndHits)
                 .orElseThrow(() -> new NotFoundException(Event.class, id));
-        final Map<Long, Long> confirmedRequests = requestService.getConfirmedRequestStats(List.of(id)).stream()
-                .collect(Collectors.toMap(RequestStats::getEventId, RequestStats::getRequestCount));
-        event.setConfirmedRequests(confirmedRequests.getOrDefault(id, 0L));
-        final String endpoint = "/events/%d".formatted(id);
-        final Map<String, Long> views = statsClient.getStats(VIEWS_FROM, VIEWS_TO, List.of(endpoint), true).stream()
+    }
+
+    private void fetchConfirmedRequestsAndHits(final List<Event> events) {
+        final List<Long> ids = events.stream()
+                .map(Event::getId)
+                .toList();
+        final List<String> uris = ids.stream()
+                .map(id -> "/events/" + id)
+                .toList();
+        final Map<String, Long> views = statsClient.getStats(VIEWS_FROM, VIEWS_TO, uris, true).stream()
                 .collect(Collectors.toMap(ViewStatsDto::uri, ViewStatsDto::hits));
-        event.setViews(views.getOrDefault(endpoint, 0L));
+        events.forEach(event -> event.setViews(views.getOrDefault("/events/" + event.getId(), 0L)));
+    }
+
+    private Event fetchConfirmedRequestsAndHits(final Event event) {
+        fetchConfirmedRequestsAndHits(List.of(event));
         return event;
+    }
+
+    private Event updateInternally(final Event event, final EventPatch patch) {
+        applyPatch(event, patch);
+        if (event.getState() == EventState.PUBLISHED && event.getPublishedOn() == null) {
+            event.setPublishedOn(now());
+        }
+        repository.save(event);
+        final Event savedEvent = getByIdInternally(event.getId());
+        log.info("updated event with id = {}: {}", savedEvent.getId(), savedEvent);
+        return savedEvent;
     }
 
     private void applyPatch(final Event event, final EventPatch patch) {

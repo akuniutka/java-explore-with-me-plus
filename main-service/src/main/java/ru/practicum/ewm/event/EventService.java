@@ -11,7 +11,9 @@ public interface EventService {
 
     Event getById(long id);
 
-    Event getById(long id, long userId);
+    Event getByIdAndUserId(long id, long userId);
+
+    List<Event> get(@NotNull @Valid EventFilter filter);
 
     List<Event> getByIds(List<Long> ids);
 

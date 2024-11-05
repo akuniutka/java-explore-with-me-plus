@@ -60,9 +60,4 @@ class CategoryServiceImpl implements CategoryService {
             log.info("No category removed: category with id = {} does not exist", id);
         }
     }
-
-    @Override
-    public boolean containsById(final long id) {
-        return repository.existsById(id);
-    }
 }

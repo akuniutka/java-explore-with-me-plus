@@ -32,7 +32,7 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @NotNull
     private User initiator;
 
@@ -40,7 +40,7 @@ public class Event {
     @Size(min = 3, max = 120)
     private String title;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @NotNull
     private Category category;
 
@@ -60,7 +60,7 @@ public class Event {
     private String description;
 
     @PositiveOrZero
-    private int participantLimit;
+    private long participantLimit;
 
     private boolean paid;
     private boolean requestModeration;

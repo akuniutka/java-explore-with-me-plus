@@ -1,16 +1,13 @@
 package ru.practicum.ewm.event;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
-import java.util.List;
 import java.util.Optional;
 
-interface EventRepository extends JpaRepository<Event, Long> {
+interface EventRepository extends JpaRepository<Event, Long>, QuerydslPredicateExecutor<Event> {
 
-    @Query("select e from Event e join fetch e.initiator join fetch e.category where e.id = :id")
-    Optional<Event> findByIdWithRelations(@Param("id") long id);
+    Optional<Event> findByIdAndInitiatorId(long id, long userId);
 
-    List<Event> findByIdIn(List<Long> ids);
+    Optional<Event> findByIdAndState(long id, EventState state);
 }

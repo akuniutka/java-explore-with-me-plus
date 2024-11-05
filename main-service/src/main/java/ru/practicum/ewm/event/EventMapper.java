@@ -7,6 +7,7 @@ import ru.practicum.ewm.user.UserMapper;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class EventMapper {
             event.setLocation(copyLocation(dto.location()));
             event.setAnnotation(dto.annotation());
             event.setDescription(dto.description());
-            event.setParticipantLimit(dto.participantLimit() == null ? 0 : dto.participantLimit());
+            event.setParticipantLimit(dto.participantLimit() == null ? 0L : dto.participantLimit());
             event.setPaid(Boolean.TRUE.equals(dto.paid()));
             event.setRequestModeration(dto.requestModeration() == null || dto.requestModeration());
         }
@@ -112,6 +113,15 @@ public class EventMapper {
                 .build();
     }
 
+    List<EventFullDto> mapToFullDto(final List<Event> events) {
+        if (events == null) {
+            return null;
+        }
+        return events.stream()
+                .map(this::mapToFullDto)
+                .toList();
+    }
+
     public EventShortDto mapToDto(final Event event) {
         if (event == null) {
             return null;
@@ -127,6 +137,15 @@ public class EventMapper {
                 .confirmedRequests(event.getConfirmedRequests())
                 .views(event.getViews())
                 .build();
+    }
+
+    public List<EventShortDto> mapToDto(final List<Event> events) {
+        if (events == null) {
+            return null;
+        }
+        return events.stream()
+                .map(this::mapToDto)
+                .toList();
     }
 
     private Location copyLocation(final Location location) {

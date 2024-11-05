@@ -21,7 +21,7 @@ record EventFullDto(
         Location location,
         String annotation,
         String description,
-        Integer participantLimit,
+        Long participantLimit,
         Boolean paid,
         Boolean requestModeration,
         Long confirmedRequests,
