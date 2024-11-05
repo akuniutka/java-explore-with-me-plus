@@ -1,6 +1,6 @@
 package ru.practicum.ewm.request;
 
-final public class RequestMapper {
+public class RequestMapper {
 
     private RequestMapper() {
     }
