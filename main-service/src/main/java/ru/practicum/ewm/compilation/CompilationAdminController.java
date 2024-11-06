@@ -2,7 +2,6 @@ package ru.practicum.ewm.compilation;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -26,14 +25,14 @@ public class CompilationAdminController extends HttpRequestResponseLogger {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable @Positive final long id, final HttpServletRequest request) {
+    public void delete(@PathVariable final long id, final HttpServletRequest request) {
         logHttpRequest(request);
         compilationService.delete(id);
         logHttpResponse(request);
     }
 
     @PatchMapping("/{id}")
-    public CompilationDto update(@PathVariable @Positive final long id,
+    public CompilationDto update(@PathVariable final long id,
                        @RequestBody @Valid final UpdateCompilationRequest requestDto,
                        final HttpServletRequest request) {
         logHttpRequest(request, requestDto);

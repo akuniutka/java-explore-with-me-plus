@@ -29,7 +29,7 @@ public class CompilationPublicController extends HttpRequestResponseLogger {
     }
 
     @GetMapping("/{id}")
-    public CompilationDto getById(@PathVariable @Positive final long id, final HttpServletRequest request) {
+    public CompilationDto getById(@PathVariable final long id, final HttpServletRequest request) {
         logHttpRequest(request);
         final CompilationDto responseDto = compilationService.getById(id);
         logHttpResponse(request, responseDto);
