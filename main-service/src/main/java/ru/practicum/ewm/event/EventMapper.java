@@ -57,7 +57,7 @@ public class EventMapper {
                         switch (dto.stateAction()) {
                             case PUBLISH_EVENT -> EventState.PUBLISHED;
                             case REJECT_EVENT -> EventState.CANCELED;
-                            case null -> null;
+//                            case null -> null;
                         }
                 )
                 .build();
@@ -81,7 +81,7 @@ public class EventMapper {
                         switch (dto.stateAction()) {
                             case SEND_TO_REVIEW -> EventState.PENDING;
                             case CANCEL_REVIEW -> EventState.CANCELED;
-                            case null -> null;
+//                            case null -> null;
                         }
                 )
                 .build();
