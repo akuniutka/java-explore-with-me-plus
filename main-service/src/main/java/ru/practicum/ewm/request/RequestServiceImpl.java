@@ -33,9 +33,8 @@ class RequestServiceImpl implements RequestService {
             throw new NotPossibleException("User is Initiator of event");
         if (!event.getState().equals(EventState.PUBLISHED))
             throw new NotPossibleException("Event is not published");
-        if (event.getConfirmedRequests() >= event.getParticipantLimit()
-                && (event.isRequestModeration() || event.getParticipantLimit() != 0))
-            throw new NotPossibleException("Request limit exceeded");
+        if (event.getParticipantLimit() != 0 && event.getConfirmedRequests() >= event.getParticipantLimit())
+                throw new NotPossibleException("Request limit exceeded");
         Request newRequest = new Request();
         newRequest.setRequester(user);
         newRequest.setEvent(event);
@@ -61,6 +60,8 @@ class RequestServiceImpl implements RequestService {
         userService.getById(userId);
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException(Request.class, requestId));
+        if (!request.getRequester().getId().equals(userId))
+            throw new NotPossibleException("Request is not by user");
         request.setStatus(RequestState.CANCELED);
         return RequestMapper.mapToRequestDto(requestRepository.save(request));
     }

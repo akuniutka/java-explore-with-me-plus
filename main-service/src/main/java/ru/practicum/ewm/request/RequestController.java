@@ -31,7 +31,6 @@ public class RequestController extends HttpRequestResponseLogger {
     }
 
     @PatchMapping("/{requestId}/cancel")
-    @ResponseStatus
     RequestDto delete(@PathVariable final long userId, @PathVariable long requestId, final HttpServletRequest request) {
         logHttpRequest(request);
         RequestDto requestDto = requestService.cancel(userId, requestId);
