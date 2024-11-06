@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS compilations
 (
     id     BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     pinned BOOLEAN      NOT NULL,
-    title  VARCHAR(255) NOT NULL
+    title  VARCHAR(255) NOT NULL,
+    CONSTRAINT compilations_title_ux UNIQUE (title)
 );
 
 CREATE TABLE IF NOT EXISTS users
