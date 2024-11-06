@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS requests
     CONSTRAINT requests_event_id_fk FOREIGN KEY (event_id) REFERENCES events (id),
     CONSTRAINT requests_requester_id_fk FOREIGN KEY (requester_id) REFERENCES users (id),
     CONSTRAINT status_values CHECK (status IN ('PENDING', 'CONFIRMED', 'REJECTED', 'CANCELED'))
+);
 
 CREATE TABLE IF NOT EXISTS compilation_event
 (
