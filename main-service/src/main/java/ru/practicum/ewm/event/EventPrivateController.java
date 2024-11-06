@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.common.HttpRequestResponseLogger;
-import ru.practicum.ewm.request.RequestDto;
 
 import java.util.List;
 
@@ -81,23 +80,12 @@ class EventPrivateController extends HttpRequestResponseLogger {
     EventFullDto update(
             @PathVariable final long userId,
             @PathVariable final long eventId,
-            @RequestBody @Valid UpdateEventUserRequest updateEventUserRequest,
+            @RequestBody @Valid final UpdateEventUserRequest updateEventUserRequest,
             final HttpServletRequest httpRequest) {
         logHttpRequest(httpRequest, updateEventUserRequest);
         final EventPatch patch = mapper.mapToPatch(updateEventUserRequest);
         final EventFullDto dto = mapper.mapToFullDto(events.update(eventId, patch, userId));
         logHttpResponse(httpRequest, dto);
         return dto;
-    }
-
-    @GetMapping("/{eventId}/requests")
-    List<RequestDto> getRequests(
-            @PathVariable final long userId,
-            @PathVariable final long eventId,
-            final HttpServletRequest httpRequest) {
-        logHttpRequest(httpRequest);
-        final List<RequestDto> dtos = events.getRequests(userId, eventId);
-        logHttpResponse(httpRequest, dtos);
-        return dtos;
     }
 }

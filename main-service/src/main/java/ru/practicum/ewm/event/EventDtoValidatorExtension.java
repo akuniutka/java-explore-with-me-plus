@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 @Component
-public class EventDtoValidatorExtension implements Validator {
+class EventDtoValidatorExtension implements Validator {
 
     private final Clock clock;
     private final Duration adminTimeout;

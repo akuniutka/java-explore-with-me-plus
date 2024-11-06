@@ -22,5 +22,7 @@ public interface EventService {
 
     Event update(long id, @NotNull @Valid EventPatch patch, long userId);
 
-    List<RequestDto> getRequests(long userid, long eventId);
+    List<RequestDto> getRequests(long userId, long eventId);
+
+    EventRequestStatusDto processRequests(long id, @NotNull @Valid UpdateEventRequestStatusDto dto, long userId);
 }
