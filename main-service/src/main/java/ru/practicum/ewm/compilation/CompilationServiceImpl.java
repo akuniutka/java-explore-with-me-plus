@@ -11,8 +11,10 @@ import ru.practicum.ewm.event.Event;
 import ru.practicum.ewm.event.EventRepository;
 import ru.practicum.ewm.exception.NotFoundException;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -42,9 +44,7 @@ public class CompilationServiceImpl implements CompilationService {
     @Transactional
     @Override
     public CompilationDto save(final NewCompilationDto requestDto) {
-        final Set<Long> eventIds = requestDto.events();
-        final Set<Event> relatedEvents = eventRepository.findAllByIdIn(eventIds);
-        final Compilation compilation = mapper.mapToCompilation(requestDto, relatedEvents);
+        final Compilation compilation = mapper.mapToCompilation(requestDto, fetchEvents(requestDto.events()));
         return mapper.mapToDto(compilationRepository.save(compilation));
     }
 
@@ -69,9 +69,22 @@ public class CompilationServiceImpl implements CompilationService {
             compilation.setPinned(requestDto.pinned());
         }
         if (requestDto.events() != null) {
-            compilation.setEvents(eventRepository.findAllByIdIn(requestDto.events()));
+            compilation.setEvents(fetchEvents(requestDto.events()));
         }
         final Compilation updatedCompilation = compilationRepository.save(compilation);
         return mapper.mapToDto(updatedCompilation);
+    }
+
+    private Set<Event> fetchEvents(Set<Long> ids) {
+        final Set<Event> relatedEvents = eventRepository.findAllByIdIn(ids);
+        if (ids.size() != relatedEvents.size()) {
+            final Set<Long> foundEventIds = relatedEvents.stream()
+                    .map(Event::getId)
+                    .collect(Collectors.toSet());
+            Set<Long> missingEventIds = new HashSet<>(ids);
+            missingEventIds.removeAll(foundEventIds);
+            throw new NotFoundException(Compilation.class, missingEventIds);
+        }
+        return relatedEvents;
     }
 }
