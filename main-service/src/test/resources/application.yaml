@@ -9,3 +9,7 @@ spring:
 stats:
   server:
     uri: http://localhost:9090
+ewm:
+  timeout:
+    admin: PT1H
+    user: PT2H

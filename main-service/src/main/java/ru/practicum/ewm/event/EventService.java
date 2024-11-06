@@ -11,6 +11,8 @@ public interface EventService {
 
     Event getById(long id);
 
+    Event getPublishedById(long id);
+
     Event getByIdAndUserId(long id, long userId);
 
     List<Event> get(@NotNull @Valid EventFilter filter);

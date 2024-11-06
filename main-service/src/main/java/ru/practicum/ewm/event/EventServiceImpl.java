@@ -1,8 +1,8 @@
 package ru.practicum.ewm.event;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,6 +14,7 @@ import ru.practicum.ewm.exception.FieldValidationException;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.exception.NotPossibleException;
 import ru.practicum.ewm.exception.ParameterValidationException;
+import ru.practicum.ewm.request.RequestState;
 import ru.practicum.ewm.stats.StatsClient;
 import ru.practicum.ewm.stats.ViewStatsDto;
 import ru.practicum.ewm.user.User;
@@ -34,35 +35,58 @@ import java.util.stream.Collectors;
 @Service
 @Validated
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 @Slf4j
 class EventServiceImpl implements EventService {
 
     private static final LocalDateTime VIEWS_FROM = LocalDateTime.of(1970, Month.JANUARY, 1, 0, 0, 0);
     private static final LocalDateTime VIEWS_TO = LocalDateTime.of(2100, Month.DECEMBER, 31, 23, 59, 59);
-    private static final Duration ADMIN_TIME_LIMIT = Duration.ofHours(1L);
-    private static final Duration USER_TIME_LIMIT = Duration.ofHours(2L);
 
     private final Clock clock;
     private final UserService userService;
     private final CategoryService categoryService;
     private final StatsClient statsClient;
     private final EventRepository repository;
+    private final Duration adminTimeout;
+    private final Duration userTimeout;
+
+    EventServiceImpl(
+            final Clock clock,
+            final UserService userService,
+            final CategoryService categoryService,
+            final StatsClient statsClient,
+            final EventRepository repository,
+            @Value("${ewm.timeout.admin}") final Duration adminTimeout,
+            @Value("${ewm.timeout.user}") final Duration userTimeout
+    ) {
+        this.clock = clock;
+        this.userService = userService;
+        this.categoryService = categoryService;
+        this.statsClient = statsClient;
+        this.repository = repository;
+        this.adminTimeout = adminTimeout;
+        this.userTimeout = userTimeout;
+    }
 
     @Override
     @Transactional
     public Event add(final Event event) {
-        validateEventDate(event.getEventDate(), USER_TIME_LIMIT);
+        validateEventDate(event.getEventDate(), userTimeout);
         event.setInitiator(fetchUser(event.getInitiator()));
         event.setCategory(fetchCategory(event.getCategory()));
-        final long id = repository.save(event).getId();
-        final Event savedEvent = getByIdInternally(id);
+        final Event savedEvent = repository.save(event);
         log.info("Added event with id = {}: {}", savedEvent.getId(), savedEvent);
         return savedEvent;
     }
 
     @Override
-    public Event getById(long id) {
+    public Event getById(final long id) {
+        return repository.findById(id)
+                .map(this::fetchConfirmedRequestsAndHits)
+                .orElseThrow(() -> new NotFoundException(Event.class, id));
+    }
+
+    @Override
+    public Event getPublishedById(long id) {
         return repository.findByIdAndState(id, EventState.PUBLISHED)
                 .map(this::fetchConfirmedRequestsAndHits)
                 .orElseThrow(() -> new NotFoundException(Event.class, id));
@@ -104,7 +128,6 @@ class EventServiceImpl implements EventService {
 
         if (Boolean.TRUE.equals(filter.onlyAvailable())) {
             events.removeIf(foundEvent -> foundEvent.getParticipantLimit() > 0L
-                    && foundEvent.isRequestModeration()
                     && foundEvent.getParticipantLimit() - foundEvent.getConfirmedRequests() <= 0L);
         }
 
@@ -120,30 +143,24 @@ class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public Event update(final long id, final EventPatch patch) {
-        validateEventDate(patch.eventDate(), ADMIN_TIME_LIMIT);
-        final Event event = getByIdInternally(id);
+        validateEventDate(patch.eventDate(), adminTimeout);
+        final Event event = getById(id);
         if (event.getState() != EventState.PENDING) {
             throw new NotPossibleException("Event must be in state PENDING");
         }
-        if (patch.eventDate() == null && isFreezeTime(event.getEventDate(), ADMIN_TIME_LIMIT)) {
-            throw new NotPossibleException("Event date must be not earlier than in %s from now"
-                    .formatted(USER_TIME_LIMIT));
-        }
+        checkPostUpdateEventDate(patch.eventDate(), event.getEventDate(), adminTimeout);
         return updateInternally(event, patch);
     }
 
     @Override
     @Transactional
     public Event update(final long id, final EventPatch patch, final long userId) {
-        validateEventDate(patch.eventDate(), USER_TIME_LIMIT);
+        validateEventDate(patch.eventDate(), userTimeout);
         final Event event = getByIdAndUserId(id, userId);
         if (event.getState() == EventState.PUBLISHED) {
             throw new NotPossibleException("Only pending or canceled events can be changed");
         }
-        if (patch.eventDate() == null && isFreezeTime(event.getEventDate(), USER_TIME_LIMIT)) {
-            throw new NotPossibleException("Event date must be not earlier than in %s from now"
-                    .formatted(USER_TIME_LIMIT));
-        }
+        checkPostUpdateEventDate(patch.eventDate(), event.getEventDate(), userTimeout);
         return updateInternally(event, patch);
     }
 
@@ -151,6 +168,13 @@ class EventServiceImpl implements EventService {
         if (isFreezeTime(eventDate, timeLimit)) {
             throw new FieldValidationException("eventDate",
                     "must be not earlier than in %s from now".formatted(timeLimit), eventDate);
+        }
+    }
+
+    private void checkPostUpdateEventDate(final LocalDateTime newEventDate, final LocalDateTime oldEventDate,
+            final Duration timeout) {
+        if (newEventDate == null && isFreezeTime(oldEventDate, timeout)) {
+            throw new NotPossibleException("Event date must be not earlier than in %s from now".formatted(timeout));
         }
     }
 
@@ -162,12 +186,6 @@ class EventServiceImpl implements EventService {
         return LocalDateTime.now(clock).truncatedTo(ChronoUnit.SECONDS);
     }
 
-    private Event getByIdInternally(final long id) {
-        return repository.findById(id)
-                .map(this::fetchConfirmedRequestsAndHits)
-                .orElseThrow(() -> new NotFoundException(Event.class, id));
-    }
-
     private void fetchConfirmedRequestsAndHits(final List<Event> events) {
         final List<Long> ids = events.stream()
                 .map(Event::getId)
@@ -175,8 +193,11 @@ class EventServiceImpl implements EventService {
         final List<String> uris = ids.stream()
                 .map(id -> "/events/" + id)
                 .toList();
+        final Map<Long, Long> confirmedRequests = repository.getRequestStats(ids, RequestState.CONFIRMED).stream()
+                .collect(Collectors.toMap(EventRequestStats::getId, EventRequestStats::getRequests));
         final Map<String, Long> views = statsClient.getStats(VIEWS_FROM, VIEWS_TO, uris, true).stream()
                 .collect(Collectors.toMap(ViewStatsDto::uri, ViewStatsDto::hits));
+        events.forEach(event -> event.setConfirmedRequests(confirmedRequests.getOrDefault(event.getId(), 0L)));
         events.forEach(event -> event.setViews(views.getOrDefault("/events/" + event.getId(), 0L)));
     }
 
@@ -190,8 +211,7 @@ class EventServiceImpl implements EventService {
         if (event.getState() == EventState.PUBLISHED && event.getPublishedOn() == null) {
             event.setPublishedOn(now());
         }
-        repository.save(event);
-        final Event savedEvent = getByIdInternally(event.getId());
+        final Event savedEvent = repository.save(event);
         log.info("updated event with id = {}: {}", savedEvent.getId(), savedEvent);
         return savedEvent;
     }
