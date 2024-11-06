@@ -3,8 +3,7 @@ package ru.practicum.ewm.compilation;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.event.Event;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -26,11 +24,11 @@ public class CompilationServiceImpl implements CompilationService {
     private final EventRepository eventRepository;
 
     @Override
-    public List<CompilationDto> getAll(Boolean pinned, PageRequest pageRequest) {
+    public List<CompilationDto> getAll(Boolean pinned, Pageable pageable) {
         final BooleanExpression byPinned = pinned != null
                 ? QCompilation.compilation.pinned.eq(pinned)
                 : Expressions.TRUE; // если pinned = null ищем все подборки без фильтрации
-        final List<Compilation> compilations = compilationRepository.findAll(byPinned, pageRequest).getContent();
+        final List<Compilation> compilations = compilationRepository.findAll(byPinned, pageable).getContent();
         return mapper.mapToDto(compilations);
     }
 
@@ -83,7 +81,7 @@ public class CompilationServiceImpl implements CompilationService {
                     .collect(Collectors.toSet());
             Set<Long> missingEventIds = new HashSet<>(ids);
             missingEventIds.removeAll(foundEventIds);
-            throw new NotFoundException(Compilation.class, missingEventIds);
+            throw new NotFoundException(Event.class, missingEventIds);
         }
         return relatedEvents;
     }
