@@ -14,6 +14,9 @@ import ru.practicum.ewm.exception.FieldValidationException;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.exception.NotPossibleException;
 import ru.practicum.ewm.exception.ParameterValidationException;
+import ru.practicum.ewm.request.RequestDto;
+import ru.practicum.ewm.request.RequestMapper;
+import ru.practicum.ewm.request.RequestRepository;
 import ru.practicum.ewm.request.RequestState;
 import ru.practicum.ewm.stats.StatsClient;
 import ru.practicum.ewm.stats.ViewStatsDto;
@@ -46,6 +49,7 @@ class EventServiceImpl implements EventService {
     private final CategoryService categoryService;
     private final StatsClient statsClient;
     private final EventRepository repository;
+    private final RequestRepository requestRepository;
     private final Duration adminTimeout;
     private final Duration userTimeout;
 
@@ -55,6 +59,7 @@ class EventServiceImpl implements EventService {
             final CategoryService categoryService,
             final StatsClient statsClient,
             final EventRepository repository,
+            final RequestRepository requestRepository,
             @Value("${ewm.timeout.admin}") final Duration adminTimeout,
             @Value("${ewm.timeout.user}") final Duration userTimeout
     ) {
@@ -63,6 +68,7 @@ class EventServiceImpl implements EventService {
         this.categoryService = categoryService;
         this.statsClient = statsClient;
         this.repository = repository;
+        this.requestRepository = requestRepository;
         this.adminTimeout = adminTimeout;
         this.userTimeout = userTimeout;
     }
@@ -162,6 +168,12 @@ class EventServiceImpl implements EventService {
         }
         checkPostUpdateEventDate(patch.eventDate(), event.getEventDate(), userTimeout);
         return updateInternally(event, patch);
+    }
+
+    @Override
+    public List<RequestDto> getRequests(final long userid, final long eventId) {
+        getByIdAndUserId(eventId, userid);
+        return RequestMapper.mapToRequestDto(requestRepository.findAllByEventIdAndEventInitiatorId(eventId, userid));
     }
 
     private void validateEventDate(final LocalDateTime eventDate, final Duration timeLimit) {
