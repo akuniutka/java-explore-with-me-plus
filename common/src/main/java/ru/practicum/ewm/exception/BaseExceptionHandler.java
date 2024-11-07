@@ -46,6 +46,16 @@ public abstract class BaseExceptionHandler extends HttpRequestResponseLogger {
     }
 
     @ExceptionHandler
+    public ResponseEntity<Object> handleParameterValidationException(
+            final ParameterValidationException exception,
+            final HttpServletRequest httpRequest) {
+        log.warn(exception.getMessage());
+        final List<FieldErrorData> errors = List.of(new FieldErrorData(exception.getParameter(), exception.getError(),
+                exception.getValue()));
+        return handleFieldErrorDataInternally(ParameterType.PARAMETER, errors, httpRequest);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<Object> handleWrongValuesInRequestBody(
             final MethodArgumentNotValidException exception,
             final HttpServletRequest httpRequest) {
