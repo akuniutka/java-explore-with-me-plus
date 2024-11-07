@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
+import ru.practicum.ewm.exception.ParameterValidationException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,6 +34,9 @@ class StatsServiceImpl implements StatsService {
             final boolean unique) {
         Objects.requireNonNull(start, "Date and time to gather stats from cannot be null");
         Objects.requireNonNull(end, "Date and time to gather stats to cannot be null");
+        if (end.isBefore(start)) {
+            throw new ParameterValidationException("end", "must be after or equal to 'start'", end);
+        }
         if (CollectionUtils.isEmpty(uris)) {
             if (unique) {
                 return repository.getUniqueHits(start, end);

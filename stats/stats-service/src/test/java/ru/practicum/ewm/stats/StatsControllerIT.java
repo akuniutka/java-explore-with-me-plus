@@ -9,11 +9,17 @@ import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -93,8 +99,8 @@ class StatsControllerIT {
                         .content(requestBody))
                 .andDo(print())
                 .andExpectAll(
-                        status().isInternalServerError(),
-                        content().contentType(MediaType.APPLICATION_PROBLEM_JSON),
+                        status().isBadRequest(),
+                        content().contentType(MediaType.APPLICATION_JSON),
                         content().json(responseBody, true));
     }
 
@@ -126,8 +132,8 @@ class StatsControllerIT {
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpectAll(
-                        status().isInternalServerError(),
-                        content().contentType(MediaType.APPLICATION_PROBLEM_JSON),
+                        status().isBadRequest(),
+                        content().contentType(MediaType.APPLICATION_JSON),
                         content().json(responseBody, true));
     }
 
@@ -139,8 +145,8 @@ class StatsControllerIT {
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpectAll(
-                        status().isInternalServerError(),
-                        content().contentType(MediaType.APPLICATION_PROBLEM_JSON),
+                        status().isBadRequest(),
+                        content().contentType(MediaType.APPLICATION_JSON),
                         content().json(responseBody, true));
     }
 
@@ -221,5 +227,15 @@ class StatsControllerIT {
         inOrder.verify(mockService).getViewStats(START, END, List.of(ENDPOINT), false);
         inOrder.verify(mockMapper).mapToDto(viewStatsCaptor.capture());
         assertThat(viewStatsCaptor.getValue(), contains(equalTo(makeTestViewStats())));
+    }
+
+    @TestConfiguration
+    static class Config {
+
+        @Bean
+        @Primary
+        Clock fixedClock() {
+            return Clock.fixed(Instant.parse("2000-01-01T00:00:01Z"), ZoneId.of("Z"));
+        }
     }
 }
