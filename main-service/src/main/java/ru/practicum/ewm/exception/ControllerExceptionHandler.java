@@ -35,16 +35,6 @@ class ControllerExceptionHandler extends BaseExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<Object> handleParameterValidationException(
-            final ParameterValidationException exception,
-            final HttpServletRequest httpRequest) {
-        log.warn(exception.getMessage());
-        final List<FieldErrorData> errors = List.of(new FieldErrorData(exception.getParameter(), exception.getError(),
-                exception.getValue()));
-        return handleFieldErrorDataInternally(ParameterType.PARAMETER, errors, httpRequest);
-    }
-
-    @ExceptionHandler
     public ResponseEntity<Object> handleFieldValidationException(
             final FieldValidationException exception,
             final HttpServletRequest httpRequest) {

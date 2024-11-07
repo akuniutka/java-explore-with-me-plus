@@ -6,7 +6,9 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +28,12 @@ class EventPrivateController extends HttpRequestResponseLogger {
 
     private final EventService events;
     private final EventMapper mapper;
+    private final EventDtoValidatorExtension eventDtoValidatorExtension;
+
+    @InitBinder
+    void initBinder(final WebDataBinder binder) {
+        binder.addValidators(eventDtoValidatorExtension);
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -72,7 +80,7 @@ class EventPrivateController extends HttpRequestResponseLogger {
     EventFullDto update(
             @PathVariable final long userId,
             @PathVariable final long eventId,
-            @RequestBody @Valid UpdateEventUserRequest updateEventUserRequest,
+            @RequestBody @Valid final UpdateEventUserRequest updateEventUserRequest,
             final HttpServletRequest httpRequest) {
         logHttpRequest(httpRequest, updateEventUserRequest);
         final EventPatch patch = mapper.mapToPatch(updateEventUserRequest);

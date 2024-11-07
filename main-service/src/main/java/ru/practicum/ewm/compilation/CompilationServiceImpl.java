@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import ru.practicum.ewm.event.Event;
 import ru.practicum.ewm.event.EventRepository;
 import ru.practicum.ewm.exception.NotFoundException;
@@ -74,6 +75,9 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     private Set<Event> fetchEvents(Set<Long> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return Set.of();
+        }
         final Set<Event> relatedEvents = eventRepository.findAllByIdIn(ids);
         if (ids.size() != relatedEvents.size()) {
             final Set<Long> foundEventIds = relatedEvents.stream()

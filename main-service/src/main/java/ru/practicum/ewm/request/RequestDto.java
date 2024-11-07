@@ -5,7 +5,7 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder(toBuilder = true)
-record RequestDto(
+public record RequestDto(
 
         LocalDateTime created,
 

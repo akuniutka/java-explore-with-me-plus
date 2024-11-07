@@ -38,7 +38,7 @@ class RequestServiceImpl implements RequestService {
         Request newRequest = new Request();
         newRequest.setRequester(user);
         newRequest.setEvent(event);
-        if (event.isRequestModeration()) {
+        if (event.isRequestModeration() && event.getParticipantLimit() != 0) {
             newRequest.setStatus(RequestState.PENDING);
         } else {
             newRequest.setStatus(RequestState.CONFIRMED);
