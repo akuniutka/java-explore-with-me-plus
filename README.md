@@ -77,7 +77,7 @@
       "name": "Outdoors"
    },
    "eventDate": "2030-12-31 23:55:00",
-   "annotation": "Let's some skating, skiing and snowball fight",
+   "annotation": "Let's do some skating, skiing and snowball fight",
    "paid": false,
    "confirmedRequests": false,
    "views": 8186481118
