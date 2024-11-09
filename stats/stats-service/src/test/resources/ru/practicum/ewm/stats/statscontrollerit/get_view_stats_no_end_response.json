@@ -1,7 +1,13 @@
 {
-  "type": "about:blank",
-  "title": "Internal Server Error",
-  "status": 500,
-  "detail": "Please contact site admin",
-  "instance": "/stats"
+  "status": "BAD_REQUEST",
+  "reason": "Wrong request format",
+  "message": "There is an error in parameter 'end'",
+  "errors": [
+    {
+      "field": "end",
+      "error": "no value provided",
+      "value": null
+    }
+  ],
+  "timestamp": "2000-01-01 00:00:01"
 }
