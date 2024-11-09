@@ -64,7 +64,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             throw new NotFoundException(User.class, targetId);
         }
         final Subscription subscription = subscriptionRepository.findBySubscriberIdAndTargetId(subscriberId, targetId)
-                .orElseThrow(() -> new NotPossibleException("Subscription does not exist"));
+                .orElseThrow(() -> new NotFoundException(Subscription.class, Set.of(subscriberId, targetId)));
         subscriptionRepository.delete(subscription);
     }
 }
