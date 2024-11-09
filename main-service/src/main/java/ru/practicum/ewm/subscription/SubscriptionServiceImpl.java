@@ -39,17 +39,15 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         subscriptionRepository.save(subscription);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<EventShortDto> getEvents(long subscriberId, EventFilter filter) {
         if (!userRepository.existsById(subscriberId)) {
             throw new NotFoundException(User.class, subscriberId);
         }
-        final Set<Subscription> subscriptions = subscriptionRepository.findAllBySubscriberId(subscriberId);
-        final List<Long> initiatorIds = subscriptions.stream()
-                .map(subscription -> subscription.getTarget().getId())
-                .toList();
-        final EventFilter withInitiators = filter.toBuilder().users(initiatorIds).build();
-        final List<Event> events = eventService.get(withInitiators);
+        final List<Long> initiatorIds = subscriptionRepository.findTargetIdsBySubscriberId(subscriberId);
+        final EventFilter filterWithInitiators = filter.toBuilder().users(initiatorIds).build();
+        final List<Event> events = eventService.get(filterWithInitiators);
         return eventMapper.mapToDto(events);
     }
 
