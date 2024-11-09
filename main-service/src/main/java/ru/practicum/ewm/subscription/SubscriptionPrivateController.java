@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.common.HttpRequestResponseLogger;
 import ru.practicum.ewm.event.EventFilter;
@@ -61,6 +62,7 @@ public class SubscriptionPrivateController extends HttpRequestResponseLogger {
     }
 
     @DeleteMapping("/{initiatorId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void unsubscribe(@PathVariable final long userId,
                             @PathVariable final long initiatorId,
                             final HttpServletRequest request) {
