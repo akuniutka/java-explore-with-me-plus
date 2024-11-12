@@ -30,7 +30,7 @@ class EventPrivateController extends HttpRequestResponseLogger {
     private final EventMapper mapper;
     private final EventDtoValidatorExtension eventDtoValidatorExtension;
 
-    @InitBinder
+    @InitBinder({"newEventDto", "updateEventUserRequest"})
     void initBinder(final WebDataBinder binder) {
         binder.addValidators(eventDtoValidatorExtension);
     }

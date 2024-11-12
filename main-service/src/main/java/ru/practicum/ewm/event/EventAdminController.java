@@ -29,7 +29,7 @@ class EventAdminController extends HttpRequestResponseLogger {
     private final EventMapper mapper;
     private final EventDtoValidatorExtension eventDtoValidatorExtension;
 
-    @InitBinder
+    @InitBinder("updateEventAdminRequest")
     void initBinder(final WebDataBinder binder) {
         binder.addValidators(eventDtoValidatorExtension);
     }
