@@ -24,7 +24,7 @@ class EventRequestController extends HttpRequestResponseLogger {
     private final EventService events;
     private final EventRequestDtoValidatorExtension eventRequestDtoValidatorExtension;
 
-    @InitBinder
+    @InitBinder("updateEventRequestStatusDto")
     void initBinder(final WebDataBinder binder) {
         binder.addValidators(eventRequestDtoValidatorExtension);
     }
