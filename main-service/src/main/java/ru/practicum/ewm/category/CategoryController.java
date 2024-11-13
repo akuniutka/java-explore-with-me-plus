@@ -22,7 +22,7 @@ class CategoryController extends HttpRequestResponseLogger {
     private final CategoryMapperImpl mapper;
 
     @GetMapping
-    List<CategoryDto> get(
+    List<CategoryDto> getAll(
             @RequestParam(defaultValue = "0") @PositiveOrZero final int from,
             @RequestParam(defaultValue = "10") @Positive final int size,
             final HttpServletRequest httpRequest) {

@@ -40,8 +40,8 @@ class CategoryAdminController extends HttpRequestResponseLogger {
             @RequestBody @Valid final CategoryUpdateDto categoryUpdateDto,
             final HttpServletRequest httpRequest) {
         logHttpRequest(httpRequest, categoryUpdateDto);
-        final CategoryPatch patch = mapper.mapToCategoryPatch(categoryUpdateDto);
-        final CategoryDto dto = mapper.mapToDto(categories.update(id, patch));
+        final CategoryPatch patch = mapper.mapToCategoryPatch(id, categoryUpdateDto);
+        final CategoryDto dto = mapper.mapToDto(categories.update(patch));
         logHttpResponse(httpRequest, dto);
         return dto;
     }

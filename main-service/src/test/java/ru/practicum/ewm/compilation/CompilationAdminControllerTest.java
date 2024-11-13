@@ -12,18 +12,40 @@ import ru.practicum.ewm.exception.NotFoundException;
 
 import java.time.format.DateTimeFormatter;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.practicum.ewm.category.CategoryTestUtil.CATEGORY_NAME_1;
-import static ru.practicum.ewm.compilation.CompilationTestUtil.*;
-import static ru.practicum.ewm.event.EventTestUtil.*;
+import static ru.practicum.ewm.common.CommonUtils.CATEGORY_NAME;
+import static ru.practicum.ewm.compilation.CompilationTestUtil.COMPILATION_DTO_1;
+import static ru.practicum.ewm.compilation.CompilationTestUtil.COMPILATION_ID_1;
+import static ru.practicum.ewm.compilation.CompilationTestUtil.COMPILATION_TITLE_1;
+import static ru.practicum.ewm.compilation.CompilationTestUtil.NEW_COMPILATION_DTO;
+import static ru.practicum.ewm.compilation.CompilationTestUtil.NEW_COMPILATION_DTO_WITH_BLANK_TITLE;
+import static ru.practicum.ewm.compilation.CompilationTestUtil.NEW_COMPILATION_DTO_WITH_LONG_TITLE;
+import static ru.practicum.ewm.compilation.CompilationTestUtil.NEW_COMPILATION_DTO_WITH_NULL_TITLE;
+import static ru.practicum.ewm.compilation.CompilationTestUtil.UPDATE_COMPILATION_REQUEST;
+import static ru.practicum.ewm.compilation.CompilationTestUtil.UPDATE_COMPILATION_REQUEST_WITH_BLANK_TITLE;
+import static ru.practicum.ewm.compilation.CompilationTestUtil.UPDATE_COMPILATION_REQUEST_WITH_LONG_TITLE;
+import static ru.practicum.ewm.event.EventTestUtil.EVENT_ANNOTATION_1;
+import static ru.practicum.ewm.event.EventTestUtil.EVENT_DATE_1;
+import static ru.practicum.ewm.event.EventTestUtil.EVENT_TITLE_1;
 import static ru.practicum.ewm.user.UserTestUtil.USER_NAME_1;
 
 @WebMvcTest(controllers = CompilationAdminController.class)
 public class CompilationAdminControllerTest {
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     @Autowired
     private MockMvc mvc;
 
@@ -32,8 +54,6 @@ public class CompilationAdminControllerTest {
 
     @MockBean
     private CompilationService compilationService;
-
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @AfterEach
     void tearDown() {
@@ -51,7 +71,7 @@ public class CompilationAdminControllerTest {
                 .andExpect(jsonPath("$.events", hasSize(1)))
                 .andExpect(jsonPath("$.events[0].initiator.name", is(USER_NAME_1)))
                 .andExpect(jsonPath("$.events[0].title", is(EVENT_TITLE_1)))
-                .andExpect(jsonPath("$.events[0].category.name", is(CATEGORY_NAME_1)))
+                .andExpect(jsonPath("$.events[0].category.name", is(CATEGORY_NAME)))
                 .andExpect(jsonPath("$.events[0].eventDate", is(EVENT_DATE_1.format(formatter))))
                 .andExpect(jsonPath("$.events[0].annotation", is(EVENT_ANNOTATION_1)))
                 .andExpect(jsonPath("$.events[0].paid", is(false)))
@@ -99,7 +119,8 @@ public class CompilationAdminControllerTest {
 
     @Test
     void testDeleteWhenNotFound() throws Exception {
-        doThrow(new NotFoundException(Compilation.class, COMPILATION_ID_1)).when(compilationService).delete(COMPILATION_ID_1);
+        doThrow(new NotFoundException(Compilation.class, COMPILATION_ID_1)).when(compilationService)
+                .delete(COMPILATION_ID_1);
         mvc.perform(delete("/admin/compilations/{id}", COMPILATION_ID_1))
                 .andExpect(status().isNotFound());
         verify(compilationService).delete(COMPILATION_ID_1);
@@ -116,7 +137,7 @@ public class CompilationAdminControllerTest {
                 .andExpect(jsonPath("$.events", hasSize(1)))
                 .andExpect(jsonPath("$.events[*].initiator.name", hasItem(USER_NAME_1)))
                 .andExpect(jsonPath("$.events[*].title", hasItem(EVENT_TITLE_1)))
-                .andExpect(jsonPath("$.events[*].category.name", hasItem(CATEGORY_NAME_1)))
+                .andExpect(jsonPath("$.events[*].category.name", hasItem(CATEGORY_NAME)))
                 .andExpect(jsonPath("$.events[*].eventDate", hasItem(EVENT_DATE_1.format(formatter))))
                 .andExpect(jsonPath("$.events[*].annotation", hasItem(EVENT_ANNOTATION_1)))
                 .andExpect(jsonPath("$.events[*].paid", hasItem(false)))

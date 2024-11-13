@@ -15,7 +15,6 @@ import java.util.Optional;
 
 @Service
 @Validated
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Slf4j
 class CategoryServiceImpl implements CategoryService {
@@ -23,7 +22,6 @@ class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository repository;
 
     @Override
-    @Transactional
     public Category add(final Category category) {
         final Category savedCategory = repository.save(category);
         log.info("Added category with id = {}: {}", savedCategory.getId(), savedCategory);
@@ -42,22 +40,20 @@ class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @Transactional
-    public Category update(final long id, final CategoryPatch patch) {
-        final Category category = getById(id);
+    public Category update(final CategoryPatch patch) {
+        final Category category = getById(patch.categoryId());
         Optional.ofNullable(patch.name()).ifPresent(category::setName);
         final Category savedCategory = repository.save(category);
         log.info("Updated category with id = {}: {}", savedCategory.getId(), savedCategory);
         return savedCategory;
     }
 
-    @Override
     @Transactional
+    @Override
     public void removeById(final long id) {
-        if (repository.delete(id) == 1) {
-            log.info("Removed category with id = {}", id);
-        } else {
-            log.info("No category removed: category with id = {} does not exist", id);
+        if (repository.delete(id) == 0) {
+            throw new NotFoundException(Category.class, id);
         }
+        log.info("Removed category with id = {}", id);
     }
 }
