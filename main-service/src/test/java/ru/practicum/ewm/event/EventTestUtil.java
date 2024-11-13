@@ -1,9 +1,12 @@
 package ru.practicum.ewm.event;
 
+import ru.practicum.ewm.category.CategoryDto;
+
 import java.time.LocalDateTime;
 import java.time.Month;
 
-import static ru.practicum.ewm.category.CategoryTestUtil.CATEGORY_DTO_1;
+import static ru.practicum.ewm.common.CommonUtils.CATEGORY_ID;
+import static ru.practicum.ewm.common.CommonUtils.CATEGORY_NAME;
 import static ru.practicum.ewm.user.UserTestUtil.USER_SHORT_DTO_1;
 
 public class EventTestUtil {
@@ -14,6 +17,11 @@ public class EventTestUtil {
     public static final String EVENT_ANNOTATION_1 = "Event annotation 1";
     public static final LocalDateTime EVENT_DATE_1 = LocalDateTime
             .of(2999, Month.DECEMBER, 1, 12, 0, 0);
+
+    public static final CategoryDto CATEGORY_DTO_1 = CategoryDto.builder()
+            .id(CATEGORY_ID)
+            .name(CATEGORY_NAME)
+            .build();
 
     public static final EventShortDto EVENT_SHORT_DTO_1 = EventShortDto.builder()
             .id(EVENT_ID_1)

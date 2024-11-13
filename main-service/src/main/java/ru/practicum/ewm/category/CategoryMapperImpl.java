@@ -3,6 +3,7 @@ package ru.practicum.ewm.category;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 class CategoryMapperImpl implements CategoryMapper {
@@ -16,11 +17,8 @@ class CategoryMapperImpl implements CategoryMapper {
         return category;
     }
 
-    CategoryPatch mapToCategoryPatch(final CategoryUpdateDto dto) {
-        if (dto == null) {
-            return null;
-        }
-        return new CategoryPatch(dto.name());
+    CategoryPatch mapToCategoryPatch(final long id, final CategoryUpdateDto dto) {
+        return new CategoryPatch(id, Optional.ofNullable(dto).map(CategoryUpdateDto::name).orElse(null));
     }
 
     @Override

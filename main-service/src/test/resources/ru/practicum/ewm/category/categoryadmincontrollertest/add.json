@@ -1,0 +1,10 @@
+[
+  {
+    "level": "INFO",
+    "message": "Received POST at http://somehost/home?value=none: CategoryCreateDto[name=sports]"
+  },
+  {
+    "level": "INFO",
+    "message": "Responded to POST http://somehost/home?value=none: CategoryDto[id=1, name=sports]"
+  }
+]

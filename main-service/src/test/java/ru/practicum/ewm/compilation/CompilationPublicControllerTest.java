@@ -11,26 +11,35 @@ import ru.practicum.ewm.exception.NotFoundException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.practicum.ewm.category.CategoryTestUtil.CATEGORY_NAME_1;
-import static ru.practicum.ewm.compilation.CompilationTestUtil.*;
-import static ru.practicum.ewm.event.EventTestUtil.*;
+import static ru.practicum.ewm.common.CommonUtils.CATEGORY_NAME;
+import static ru.practicum.ewm.compilation.CompilationTestUtil.COMPILATION_DTO_1;
+import static ru.practicum.ewm.compilation.CompilationTestUtil.COMPILATION_ID_1;
+import static ru.practicum.ewm.compilation.CompilationTestUtil.COMPILATION_TITLE_1;
+import static ru.practicum.ewm.event.EventTestUtil.EVENT_ANNOTATION_1;
+import static ru.practicum.ewm.event.EventTestUtil.EVENT_DATE_1;
+import static ru.practicum.ewm.event.EventTestUtil.EVENT_TITLE_1;
 import static ru.practicum.ewm.user.UserTestUtil.PAGEABLE;
 import static ru.practicum.ewm.user.UserTestUtil.USER_NAME_1;
 
 @WebMvcTest(controllers = CompilationPublicController.class)
 public class CompilationPublicControllerTest {
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     @Autowired
     private MockMvc mvc;
 
     @MockBean
     private CompilationService compilationService;
-
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @AfterEach
     void tearDown() {
@@ -42,14 +51,14 @@ public class CompilationPublicControllerTest {
         when(compilationService.getAll(null, PAGEABLE))
                 .thenReturn(List.of(COMPILATION_DTO_1));
         mvc.perform(get("/compilations")
-                .param("from", "0")
-                .param("size", "10"))
+                        .param("from", "0")
+                        .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].events", hasSize(1)))
                 .andExpect(jsonPath("$[0].events[*].initiator.name", hasItem(USER_NAME_1)))
                 .andExpect(jsonPath("$[0].events[*].title", hasItem(EVENT_TITLE_1)))
-                .andExpect(jsonPath("$[0].events[*].category.name", hasItem(CATEGORY_NAME_1)))
+                .andExpect(jsonPath("$[0].events[*].category.name", hasItem(CATEGORY_NAME)))
                 .andExpect(jsonPath("$[0].events[*].eventDate", hasItem(EVENT_DATE_1.format(formatter))))
                 .andExpect(jsonPath("$[0].events[*].annotation", hasItem(EVENT_ANNOTATION_1)))
                 .andExpect(jsonPath("$[0].events[*].paid", hasItem(false)))
@@ -85,7 +94,7 @@ public class CompilationPublicControllerTest {
                 .andExpect(jsonPath("$.events", hasSize(1)))
                 .andExpect(jsonPath("$.events[*].initiator.name", hasItem(USER_NAME_1)))
                 .andExpect(jsonPath("$.events[*].title", hasItem(EVENT_TITLE_1)))
-                .andExpect(jsonPath("$.events[*].category.name", hasItem(CATEGORY_NAME_1)))
+                .andExpect(jsonPath("$.events[*].category.name", hasItem(CATEGORY_NAME)))
                 .andExpect(jsonPath("$.events[*].eventDate", hasItem(
                         EVENT_DATE_1.format(formatter))))
                 .andExpect(jsonPath("$.events[*].annotation", hasItem(EVENT_ANNOTATION_1)))
