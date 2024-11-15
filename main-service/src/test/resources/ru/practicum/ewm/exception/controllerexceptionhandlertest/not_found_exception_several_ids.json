@@ -1,0 +1,10 @@
+[
+  {
+    "level": "WARN",
+    "message": "Categories with id = 1, 2, 3 not found"
+  },
+  {
+    "level": "INFO",
+    "message": "Responded to POST http://somehost/home?value=none: ApiError[status=404 NOT_FOUND, reason=The required object(s) not found, message=Categories with id = 1, 2, 3 not found, errors=null, timestamp=2000-01-01T00:00:01]"
+  }
+]
