@@ -81,7 +81,7 @@ class ControllerExceptionHandler extends BaseExceptionHandler {
         log.warn(exception.getMessage());
         final ApiError apiError = ApiError.builder()
                 .status(HttpStatus.NOT_FOUND)
-                .reason("The required object was not found")
+                .reason("The required object(s) not found")
                 .message(exception.getMessage())
                 .timestamp(LocalDateTime.now(clock))
                 .build();
