@@ -6,6 +6,7 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.json.JSONException;
+import org.mockito.ArgumentMatchers;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.core.io.ClassPathResource;
 
@@ -14,6 +15,9 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.samePropertyValuesAs;
 
 public final class CommonUtils {
 
@@ -46,5 +50,9 @@ public final class CommonUtils {
         final String expected = loadJson(filename, clazz);
         final String actual = mapper.writeValueAsString(events);
         JSONAssert.assertEquals(expected, actual, false);
+    }
+
+    public static <T> List<T> refContains(final T element) {
+        return ArgumentMatchers.argThat(argument -> contains(samePropertyValuesAs(element)).matches(argument));
     }
 }

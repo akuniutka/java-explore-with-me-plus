@@ -10,11 +10,11 @@ import ru.practicum.ewm.common.LogListener;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static ru.practicum.ewm.category.TestModels.CATEGORY_ID;
 import static ru.practicum.ewm.category.TestModels.NO_ID;
 import static ru.practicum.ewm.category.TestModels.makeTestCategory;
@@ -57,15 +57,15 @@ class CategoryAdminControllerTest extends AbstractControllerTest {
     @Test
     void whenAdd_ThenMapCategoryCreateDtoToCategoryAndPassToServiceAndMapServiceResponseToDtoAndReturnItAndLog()
             throws Exception {
-        when(mockMapper.mapToCategory(makeTestCategoryCreateDto())).thenReturn(makeTestCategory(NO_ID));
+        when(mockMapper.mapToCategory(any(CategoryCreateDto.class))).thenReturn(makeTestCategory(NO_ID));
         when(mockService.add(any())).thenReturn(makeTestCategory());
         when(mockMapper.mapToDto(any(Category.class))).thenReturn(makeTestCategoryDto());
 
         final CategoryDto categoryDto = controller.add(makeTestCategoryCreateDto(), mockHttpRequest);
 
         inOrder.verify(mockMapper).mapToCategory(makeTestCategoryCreateDto());
-        inOrder.verify(mockService).add(argThat(samePropertyValuesAs(makeTestCategory(NO_ID))));
-        inOrder.verify(mockMapper).mapToDto(argThat(samePropertyValuesAs(makeTestCategory())));
+        inOrder.verify(mockService).add(refEq(makeTestCategory(NO_ID)));
+        inOrder.verify(mockMapper).mapToDto(refEq(makeTestCategory()));
         assertThat(categoryDto, equalTo(makeTestCategoryDto()));
         assertLogs(logListener.getEvents(), "add.json", getClass());
     }
@@ -73,8 +73,7 @@ class CategoryAdminControllerTest extends AbstractControllerTest {
     @Test
     void whenUpdate_ThenMapCategoryUpdateDtoToPatchAndPassToServiceAndMapServiceResponseToDtoAndReturnAndLog()
             throws Exception {
-        when(mockMapper.mapToCategoryPatch(CATEGORY_ID, makeTestCategoryUpdateDto()))
-                .thenReturn(makeTestCategoryPatch());
+        when(mockMapper.mapToCategoryPatch(anyLong(), any())).thenReturn(makeTestCategoryPatch());
         when(mockService.update(any())).thenReturn(makeTestCategory());
         when(mockMapper.mapToDto(any(Category.class))).thenReturn(makeTestCategoryDto());
 
@@ -82,7 +81,7 @@ class CategoryAdminControllerTest extends AbstractControllerTest {
 
         inOrder.verify(mockMapper).mapToCategoryPatch(CATEGORY_ID, makeTestCategoryUpdateDto());
         inOrder.verify(mockService).update(makeTestCategoryPatch());
-        inOrder.verify(mockMapper).mapToDto(argThat(samePropertyValuesAs(makeTestCategory())));
+        inOrder.verify(mockMapper).mapToDto(refEq(makeTestCategory()));
         assertThat(categoryDto, equalTo(makeTestCategoryDto()));
         assertLogs(logListener.getEvents(), "update.json", getClass());
     }

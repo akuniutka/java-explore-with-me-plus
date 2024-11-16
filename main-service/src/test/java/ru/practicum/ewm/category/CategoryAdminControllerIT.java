@@ -15,11 +15,11 @@ import ru.practicum.ewm.common.ClockConfig;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -67,7 +67,7 @@ class CategoryAdminControllerIT {
     void whenPostAtBasePath_ThenInvokeAddMethodAndProcessResponse() throws Exception {
         final String requestBody = loadJson("add_request.json", getClass());
         final String responseBody = loadJson("add_response.json", getClass());
-        when(mockMapper.mapToCategory(makeTestCategoryCreateDto())).thenReturn(makeTestCategory(NO_ID));
+        when(mockMapper.mapToCategory(any(CategoryCreateDto.class))).thenReturn(makeTestCategory(NO_ID));
         when(mockService.add(any())).thenReturn(makeTestCategory());
         when(mockMapper.mapToDto(any(Category.class))).thenReturn(makeTestCategoryDto());
 
@@ -82,8 +82,8 @@ class CategoryAdminControllerIT {
                         content().json(responseBody, true));
 
         inOrder.verify(mockMapper).mapToCategory(makeTestCategoryCreateDto());
-        inOrder.verify(mockService).add(argThat(samePropertyValuesAs(makeTestCategory(NO_ID))));
-        inOrder.verify(mockMapper).mapToDto(argThat(samePropertyValuesAs(makeTestCategory())));
+        inOrder.verify(mockService).add(refEq(makeTestCategory(NO_ID)));
+        inOrder.verify(mockMapper).mapToDto(refEq(makeTestCategory()));
     }
 
     @Test
@@ -106,8 +106,7 @@ class CategoryAdminControllerIT {
     void whenPatchAtBasePathWithId_ThenInvokeUpdateMethodAndProcessResponse() throws Exception {
         final String requestBody = loadJson("update_request.json", getClass());
         final String responseBody = loadJson("update_response.json", getClass());
-        when(mockMapper.mapToCategoryPatch(CATEGORY_ID, makeTestCategoryUpdateDto()))
-                .thenReturn(makeTestCategoryPatch());
+        when(mockMapper.mapToCategoryPatch(anyLong(), any())).thenReturn(makeTestCategoryPatch());
         when(mockService.update(any())).thenReturn(makeTestCategory());
         when(mockMapper.mapToDto(any(Category.class))).thenReturn(makeTestCategoryDto());
 
@@ -123,7 +122,7 @@ class CategoryAdminControllerIT {
 
         inOrder.verify(mockMapper).mapToCategoryPatch(CATEGORY_ID, makeTestCategoryUpdateDto());
         inOrder.verify(mockService).update(makeTestCategoryPatch());
-        inOrder.verify(mockMapper).mapToDto(argThat(samePropertyValuesAs(makeTestCategory())));
+        inOrder.verify(mockMapper).mapToDto(refEq(makeTestCategory()));
     }
 
     @Test

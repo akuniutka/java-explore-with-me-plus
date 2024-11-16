@@ -8,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import ru.practicum.ewm.common.LogListener;
 import ru.practicum.ewm.exception.NotFoundException;
 
@@ -21,6 +22,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
@@ -76,7 +78,7 @@ class CategoryServiceImplTest {
 
     @Test
     void whenGetExistingCategoryById_ThenRetrieveCategoryFromRepositoryAndReturnIt() {
-        when(mockRepository.findById(CATEGORY_ID)).thenReturn(Optional.of(makeTestCategory()));
+        when(mockRepository.findById(anyLong())).thenReturn(Optional.of(makeTestCategory()));
 
         final Category category = service.getById(CATEGORY_ID);
 
@@ -86,7 +88,7 @@ class CategoryServiceImplTest {
 
     @Test
     void whenGetNotExistingCategoryById_ThenLookForCategoryInRepositoryAndThrowException() {
-        when(mockRepository.findById(CATEGORY_ID)).thenReturn(Optional.empty());
+        when(mockRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         final NotFoundException exception = assertThrows(NotFoundException.class, () -> service.getById(CATEGORY_ID));
 
@@ -97,7 +99,7 @@ class CategoryServiceImplTest {
 
     @Test
     void whenGetSliceOfCategories_ThenRetrieveSliceFromRepositoryAndReturnIt() {
-        when(mockRepository.findAll(DEFAULT_PAGE)).thenReturn(new PageImpl<>(List.of(makeTestCategory())));
+        when(mockRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of(makeTestCategory())));
 
         final List<Category> categories = service.getAllInWindow(DEFAULT_WINDOW_SIZE, DEFAULT_WINDOW_INDEX);
 
@@ -107,7 +109,7 @@ class CategoryServiceImplTest {
 
     @Test
     void whenGetSliceOfCategoriesAndItIsEmpty_ThenRetrieveSliceFromRepositoryAndReturnEmptyList() {
-        when(mockRepository.findAll(DEFAULT_PAGE)).thenReturn(new PageImpl<>(List.of()));
+        when(mockRepository.findAll(any(Pageable.class))).thenReturn(new PageImpl<>(List.of()));
 
         final List<Category> categories = service.getAllInWindow(DEFAULT_WINDOW_SIZE, DEFAULT_WINDOW_INDEX);
 
@@ -118,7 +120,7 @@ class CategoryServiceImplTest {
     @Test
     void whenUpdateCategory_ThenGetItFromRepositoryAndPassUpdatedToRepositoryAndReturnRepositoryResponseAndLog()
             throws Exception {
-        when(mockRepository.findById(CATEGORY_ID)).thenReturn(Optional.of(makeTestCategory(NO_NAME)));
+        when(mockRepository.findById(anyLong())).thenReturn(Optional.of(makeTestCategory(NO_NAME)));
         when(mockRepository.save(any())).thenReturn(makeTestCategory());
 
         final Category category = service.update(makeTestCategoryPatch());
@@ -132,7 +134,7 @@ class CategoryServiceImplTest {
     @Test
     void whenUpdateCategoryAndNothingToPatch_ThenGetCategoryFromRepositoryAndPassBackAndReturnRepositoryResponseAndLog()
             throws Exception {
-        when(mockRepository.findById(CATEGORY_ID)).thenReturn(Optional.of(makeTestCategory()));
+        when(mockRepository.findById(anyLong())).thenReturn(Optional.of(makeTestCategory()));
         when(mockRepository.save(any())).thenReturn(makeTestCategory());
 
         final Category category = service.update(makeTestCategoryPatch(NO_NAME));
@@ -145,7 +147,7 @@ class CategoryServiceImplTest {
 
     @Test
     void whenUpdateNotExistingCategory_ThenLookForItInRepositoryAndThrowException() {
-        when(mockRepository.findById(CATEGORY_ID)).thenReturn(Optional.empty());
+        when(mockRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         final NotFoundException exception = assertThrows(NotFoundException.class,
                 () -> service.update(makeTestCategoryPatch()));
@@ -157,7 +159,7 @@ class CategoryServiceImplTest {
 
     @Test
     void whenRemoveExistingCategoryById_ThenDeleteItInRepositoryAndLog() throws Exception {
-        when(mockRepository.delete(CATEGORY_ID)).thenReturn(1);
+        when(mockRepository.delete(anyLong())).thenReturn(1);
 
         service.removeById(CATEGORY_ID);
 
@@ -167,7 +169,7 @@ class CategoryServiceImplTest {
 
     @Test
     void whenRemoveNotExistingCategoryById_ThenTryDeleteItInRepositoryAndThrowException() {
-        when(mockRepository.delete(CATEGORY_ID)).thenReturn(0);
+        when(mockRepository.delete(anyLong())).thenReturn(0);
 
         final NotFoundException exception = assertThrows(NotFoundException.class,
                 () -> service.removeById(CATEGORY_ID));
