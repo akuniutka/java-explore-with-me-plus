@@ -15,11 +15,22 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
-import static ru.practicum.ewm.user.UserTestUtil.*;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static ru.practicum.ewm.user.UserTestUtil.EMAIL_1;
+import static ru.practicum.ewm.user.UserTestUtil.EMAIL_2;
+import static ru.practicum.ewm.user.UserTestUtil.PAGEABLE;
+import static ru.practicum.ewm.user.UserTestUtil.USER_ID_1;
+import static ru.practicum.ewm.user.UserTestUtil.USER_ID_2;
+import static ru.practicum.ewm.user.UserTestUtil.USER_NAME_1;
+import static ru.practicum.ewm.user.UserTestUtil.USER_NAME_2;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceImplUnitTest {
+
     @Mock
     private UserRepository userRepository;
 
@@ -36,7 +47,6 @@ public class UserServiceImplUnitTest {
     private NewUserRequest newUserRequest;
     private List<User> users;
     private List<UserDto> userDtos;
-
 
     @BeforeEach
     void setUp() {

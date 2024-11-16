@@ -33,7 +33,7 @@ import static ru.practicum.ewm.category.TestModels.makeTestCategoryCreateDto;
 import static ru.practicum.ewm.category.TestModels.makeTestCategoryDto;
 import static ru.practicum.ewm.category.TestModels.makeTestCategoryPatch;
 import static ru.practicum.ewm.category.TestModels.makeTestCategoryUpdateDto;
-import static ru.practicum.ewm.common.CommonUtils.loadJson;
+import static ru.practicum.ewm.common.TestUtils.loadJson;
 
 @WebMvcTest(controllers = CategoryAdminController.class)
 @ContextConfiguration(classes = ClockConfig.class)

@@ -13,13 +13,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static ru.practicum.ewm.compilation.CompilationTestUtil.*;
+import static ru.practicum.ewm.compilation.CompilationTestUtil.COMPILATION_ID_1;
+import static ru.practicum.ewm.compilation.CompilationTestUtil.COMPILATION_ID_2;
+import static ru.practicum.ewm.compilation.CompilationTestUtil.COMPILATION_TITLE_1;
+import static ru.practicum.ewm.compilation.CompilationTestUtil.COMPILATION_TITLE_2;
+import static ru.practicum.ewm.compilation.CompilationTestUtil.NEW_COMPILATION_DTO;
 import static ru.practicum.ewm.event.EventTestUtil.EVENT_ID_1;
 import static ru.practicum.ewm.user.UserTestUtil.PAGEABLE;
 
 @Transactional
 @SpringBootTest
 public class CompilationServiceIntegrationTest {
+
     @Autowired
     private CompilationRepository compilationRepository;
 
@@ -90,5 +95,4 @@ public class CompilationServiceIntegrationTest {
         assertThat(result.events(), hasSize(1));
         assertThat(result.events().stream().findFirst().get().id(), is(EVENT_ID_1));
     }
-
 }

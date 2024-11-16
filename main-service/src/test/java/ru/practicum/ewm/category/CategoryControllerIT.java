@@ -30,8 +30,8 @@ import static ru.practicum.ewm.category.TestModels.DEFAULT_WINDOW_INDEX;
 import static ru.practicum.ewm.category.TestModels.DEFAULT_WINDOW_SIZE;
 import static ru.practicum.ewm.category.TestModels.makeTestCategory;
 import static ru.practicum.ewm.category.TestModels.makeTestCategoryDto;
-import static ru.practicum.ewm.common.CommonUtils.loadJson;
-import static ru.practicum.ewm.common.CommonUtils.refContains;
+import static ru.practicum.ewm.common.TestUtils.loadJson;
+import static ru.practicum.ewm.common.TestUtils.refContains;
 
 @WebMvcTest(controllers = CategoryController.class)
 @ContextConfiguration(classes = ClockConfig.class)

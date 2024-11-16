@@ -19,7 +19,6 @@
         <dependency>
             <groupId>ru.practicum</groupId>
             <artifactId>explore-with-me-stats-dto</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -32,8 +31,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
+            <groupId>ru.practicum</groupId>
+            <artifactId>explore-with-me-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

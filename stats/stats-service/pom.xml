@@ -18,13 +18,11 @@
     <dependencies>
         <dependency>
             <groupId>ru.practicum</groupId>
-            <artifactId>explore-with-me-stats-dto</artifactId>
-            <version>${project.version}</version>
+            <artifactId>explore-with-me-common</artifactId>
         </dependency>
         <dependency>
             <groupId>ru.practicum</groupId>
-            <artifactId>explore-with-me-common</artifactId>
-            <version>${project.version}</version>
+            <artifactId>explore-with-me-stats-dto</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -50,8 +48,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
+            <groupId>ru.practicum</groupId>
+            <artifactId>explore-with-me-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

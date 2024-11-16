@@ -19,7 +19,7 @@ import java.util.Set;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static ru.practicum.ewm.common.CommonUtils.assertLogs;
+import static ru.practicum.ewm.common.TestUtils.assertLogs;
 
 class ControllerExceptionHandlerTest extends AbstractControllerTest {
 

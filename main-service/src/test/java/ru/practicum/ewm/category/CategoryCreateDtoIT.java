@@ -10,7 +10,7 @@ import java.util.Set;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
-import static ru.practicum.ewm.common.CommonUtils.validate;
+import static ru.practicum.ewm.common.TestUtils.validate;
 
 class CategoryCreateDtoIT {
 

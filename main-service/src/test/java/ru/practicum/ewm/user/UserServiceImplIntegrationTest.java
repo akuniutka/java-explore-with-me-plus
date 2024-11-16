@@ -10,13 +10,25 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static ru.practicum.ewm.user.UserTestUtil.*;
+import static ru.practicum.ewm.user.UserTestUtil.EMAIL_1;
+import static ru.practicum.ewm.user.UserTestUtil.EMAIL_2;
+import static ru.practicum.ewm.user.UserTestUtil.EMAIL_3;
+import static ru.practicum.ewm.user.UserTestUtil.PAGEABLE;
+import static ru.practicum.ewm.user.UserTestUtil.USER_ID_1;
+import static ru.practicum.ewm.user.UserTestUtil.USER_ID_2;
+import static ru.practicum.ewm.user.UserTestUtil.USER_ID_3;
+import static ru.practicum.ewm.user.UserTestUtil.USER_NAME_1;
+import static ru.practicum.ewm.user.UserTestUtil.USER_NAME_2;
+import static ru.practicum.ewm.user.UserTestUtil.USER_NAME_3;
 
 @Transactional
 @SpringBootTest
 public class UserServiceImplIntegrationTest {
+
     @Autowired
     private UserRepository userRepository;
 

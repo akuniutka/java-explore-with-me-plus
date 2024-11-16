@@ -4,6 +4,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 public class UserTestUtil {
+
     public static final Pageable PAGEABLE = PageRequest.of(0, 10);
     public static final long USER_ID_1 = 1L;
     public static final long USER_ID_2 = 2L;

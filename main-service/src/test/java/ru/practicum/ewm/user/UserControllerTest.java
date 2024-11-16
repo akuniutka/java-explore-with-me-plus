@@ -15,14 +15,27 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.practicum.ewm.user.UserTestUtil.*;
+import static ru.practicum.ewm.user.UserTestUtil.EMAIL_1;
+import static ru.practicum.ewm.user.UserTestUtil.EMAIL_2;
+import static ru.practicum.ewm.user.UserTestUtil.PAGEABLE;
+import static ru.practicum.ewm.user.UserTestUtil.USER_ID_1;
+import static ru.practicum.ewm.user.UserTestUtil.USER_ID_2;
+import static ru.practicum.ewm.user.UserTestUtil.USER_NAME_1;
+import static ru.practicum.ewm.user.UserTestUtil.USER_NAME_2;
 
 @WebMvcTest(controllers = UserController.class)
 public class UserControllerTest {
+
     @Autowired
     private MockMvc mvc;
 
@@ -67,8 +80,8 @@ public class UserControllerTest {
     void testGet() throws Exception {
         when(userService.findAll(PAGEABLE)).thenReturn(userDtos);
         mvc.perform(get("/admin/users")
-                .param("from", "0")
-                .param("size", "10"))
+                        .param("from", "0")
+                        .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].email", is(EMAIL_1)))
@@ -115,9 +128,9 @@ public class UserControllerTest {
     void testSave() throws Exception {
         when(userService.save(newUserRequest)).thenReturn(userDto1);
         mvc.perform(post("/admin/users")
-                .content(mapper.writeValueAsString(newUserRequest))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .content(mapper.writeValueAsString(newUserRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name", is(USER_NAME_1)))
                 .andExpect(jsonPath("$.email", is(EMAIL_1)));
