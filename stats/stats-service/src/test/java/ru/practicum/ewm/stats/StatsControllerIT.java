@@ -32,11 +32,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.practicum.ewm.common.TestUtils.loadJson;
 import static ru.practicum.ewm.stats.TestUtils.END;
 import static ru.practicum.ewm.stats.TestUtils.ENDPOINT;
 import static ru.practicum.ewm.stats.TestUtils.START;
 import static ru.practicum.ewm.stats.TestUtils.equalTo;
-import static ru.practicum.ewm.stats.TestUtils.loadJson;
 import static ru.practicum.ewm.stats.TestUtils.makeTestEndpointHit;
 import static ru.practicum.ewm.stats.TestUtils.makeTestEndpointHitDto;
 import static ru.practicum.ewm.stats.TestUtils.makeTestViewStats;

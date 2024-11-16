@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import ru.practicum.ewm.common.LogListener;
 import ru.practicum.ewm.exception.ApiError;
 
 import java.io.IOException;
@@ -20,7 +21,7 @@ import java.time.ZoneId;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static ru.practicum.ewm.stats.TestUtils.assertLogs;
+import static ru.practicum.ewm.common.TestUtils.assertLogs;
 
 class ControllerExceptionHandlerTest {
 

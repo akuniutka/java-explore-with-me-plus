@@ -2,9 +2,12 @@ package ru.practicum.ewm.compilation;
 
 import java.util.Set;
 
-import static ru.practicum.ewm.event.EventTestUtil.*;
+import static ru.practicum.ewm.event.EventTestUtil.EVENT_ID_1;
+import static ru.practicum.ewm.event.EventTestUtil.EVENT_ID_2;
+import static ru.practicum.ewm.event.EventTestUtil.EVENT_SHORT_DTO_1;
 
 public class CompilationTestUtil {
+
     public static final long COMPILATION_ID_1 = 1L;
     public static final long COMPILATION_ID_2 = 2L;
     public static final String COMPILATION_TITLE_1 = "Compilation title 1";
@@ -47,15 +50,17 @@ public class CompilationTestUtil {
             COMPILATION_TITLE_1
     );
 
-    public static final UpdateCompilationRequest UPDATE_COMPILATION_REQUEST_WITH_BLANK_TITLE = new UpdateCompilationRequest(
-            Set.of(EVENT_ID_1, EVENT_ID_2),
-            true,
-            "   "
-    );
+    public static final UpdateCompilationRequest UPDATE_COMPILATION_REQUEST_WITH_BLANK_TITLE =
+            new UpdateCompilationRequest(
+                    Set.of(EVENT_ID_1, EVENT_ID_2),
+                    true,
+                    "   "
+            );
 
-    public static final UpdateCompilationRequest UPDATE_COMPILATION_REQUEST_WITH_LONG_TITLE = new UpdateCompilationRequest(
-            Set.of(EVENT_ID_1, EVENT_ID_2),
-            true,
-            "A".repeat(51)
-    );
+    public static final UpdateCompilationRequest UPDATE_COMPILATION_REQUEST_WITH_LONG_TITLE =
+            new UpdateCompilationRequest(
+                    Set.of(EVENT_ID_1, EVENT_ID_2),
+                    true,
+                    "A".repeat(51)
+            );
 }

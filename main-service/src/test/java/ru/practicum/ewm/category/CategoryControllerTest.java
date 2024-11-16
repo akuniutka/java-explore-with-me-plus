@@ -23,8 +23,8 @@ import static org.mockito.Mockito.when;
 import static ru.practicum.ewm.category.TestModels.CATEGORY_ID;
 import static ru.practicum.ewm.category.TestModels.makeTestCategory;
 import static ru.practicum.ewm.category.TestModels.makeTestCategoryDto;
-import static ru.practicum.ewm.common.CommonUtils.assertLogs;
-import static ru.practicum.ewm.common.CommonUtils.refContains;
+import static ru.practicum.ewm.common.TestUtils.assertLogs;
+import static ru.practicum.ewm.common.TestUtils.refContains;
 
 class CategoryControllerTest extends AbstractControllerTest {
 

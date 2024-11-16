@@ -34,7 +34,7 @@ import static ru.practicum.ewm.category.TestModels.NO_ID;
 import static ru.practicum.ewm.category.TestModels.NO_NAME;
 import static ru.practicum.ewm.category.TestModels.makeTestCategory;
 import static ru.practicum.ewm.category.TestModels.makeTestCategoryPatch;
-import static ru.practicum.ewm.common.CommonUtils.assertLogs;
+import static ru.practicum.ewm.common.TestUtils.assertLogs;
 
 class CategoryServiceImplTest {
 

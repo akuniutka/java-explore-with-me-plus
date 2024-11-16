@@ -13,6 +13,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.util.UriComponentsBuilder;
+import ru.practicum.ewm.common.LogListener;
 
 import java.util.List;
 
@@ -23,17 +24,17 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
-import static ru.practicum.ewm.stats.TestUtils.END;
-import static ru.practicum.ewm.stats.TestUtils.ENDPOINT;
-import static ru.practicum.ewm.stats.TestUtils.FORMATTER;
-import static ru.practicum.ewm.stats.TestUtils.HOST;
-import static ru.practicum.ewm.stats.TestUtils.PORT;
-import static ru.practicum.ewm.stats.TestUtils.SCHEMA;
-import static ru.practicum.ewm.stats.TestUtils.START;
-import static ru.practicum.ewm.stats.TestUtils.assertLogs;
-import static ru.practicum.ewm.stats.TestUtils.loadJson;
-import static ru.practicum.ewm.stats.TestUtils.makeTestEndpointHitDto;
-import static ru.practicum.ewm.stats.TestUtils.makeTestViewStatsDto;
+import static ru.practicum.ewm.common.TestUtils.assertLogs;
+import static ru.practicum.ewm.common.TestUtils.loadJson;
+import static ru.practicum.ewm.stats.TestModels.END;
+import static ru.practicum.ewm.stats.TestModels.ENDPOINT;
+import static ru.practicum.ewm.stats.TestModels.FORMATTER;
+import static ru.practicum.ewm.stats.TestModels.HOST;
+import static ru.practicum.ewm.stats.TestModels.PORT;
+import static ru.practicum.ewm.stats.TestModels.SCHEMA;
+import static ru.practicum.ewm.stats.TestModels.START;
+import static ru.practicum.ewm.stats.TestModels.makeTestEndpointHitDto;
+import static ru.practicum.ewm.stats.TestModels.makeTestViewStatsDto;
 
 @RestClientTest
 @ContextConfiguration(classes = StatsClientImpl.class)

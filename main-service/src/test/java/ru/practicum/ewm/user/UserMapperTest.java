@@ -4,10 +4,15 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static ru.practicum.ewm.user.UserTestUtil.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static ru.practicum.ewm.user.UserTestUtil.EMAIL_1;
+import static ru.practicum.ewm.user.UserTestUtil.USER_ID_1;
+import static ru.practicum.ewm.user.UserTestUtil.USER_NAME_1;
 
 class UserMapperTest {
+
     private final UserMapper userMapper = new UserMapper();
 
     @Test

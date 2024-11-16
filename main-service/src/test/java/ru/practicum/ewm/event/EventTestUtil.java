@@ -10,6 +10,7 @@ import static ru.practicum.ewm.common.CommonUtils.CATEGORY_NAME;
 import static ru.practicum.ewm.user.UserTestUtil.USER_SHORT_DTO_1;
 
 public class EventTestUtil {
+
     public static final long EVENT_ID_1 = 1L;
     public static final long EVENT_ID_2 = 2L;
     public static final String EVENT_TITLE_1 = "Event title 1";

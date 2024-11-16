@@ -1,18 +1,11 @@
 package ru.practicum.ewm.stats;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
-import org.json.JSONException;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.springframework.core.io.ClassPathResource;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.util.List;
 import java.util.Objects;
 
 final class TestUtils {
@@ -25,8 +18,6 @@ final class TestUtils {
     static final LocalDateTime TIMESTAMP = LocalDateTime.of(2000, Month.JANUARY, 31, 13, 30, 55);
     static final LocalDateTime START = LocalDateTime.of(2000, Month.JANUARY, 1, 0, 0, 1);
     static final LocalDateTime END = LocalDateTime.of(2000, Month.FEBRUARY, 2, 0, 0, 2);
-
-    private static final ObjectMapper mapper = new ObjectMapper();
 
     private TestUtils() {
     }
@@ -75,19 +66,6 @@ final class TestUtils {
                 return HITS;
             }
         };
-    }
-
-    static String loadJson(final String filename, final Class<?> clazz) throws IOException {
-        final String expandedFilename = clazz.getSimpleName().toLowerCase() + "/" + filename;
-        final ClassPathResource resource = new ClassPathResource(expandedFilename, clazz);
-        return Files.readString(resource.getFile().toPath());
-    }
-
-    static void assertLogs(final List<LogListener.Event> events, final String filename,
-            final Class<?> clazz) throws IOException, JSONException {
-        final String expected = loadJson(filename, clazz);
-        final String actual = mapper.writeValueAsString(events);
-        JSONAssert.assertEquals(expected, actual, false);
     }
 
     static <T extends EndpointHit> Matcher<T> deepEqualTo(final EndpointHitProxy endpointHit) {
