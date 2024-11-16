@@ -15,11 +15,11 @@ import ru.practicum.ewm.common.ClockConfig;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -31,6 +31,7 @@ import static ru.practicum.ewm.category.TestModels.DEFAULT_WINDOW_SIZE;
 import static ru.practicum.ewm.category.TestModels.makeTestCategory;
 import static ru.practicum.ewm.category.TestModels.makeTestCategoryDto;
 import static ru.practicum.ewm.common.CommonUtils.loadJson;
+import static ru.practicum.ewm.common.CommonUtils.refContains;
 
 @WebMvcTest(controllers = CategoryController.class)
 @ContextConfiguration(classes = ClockConfig.class)
@@ -69,7 +70,7 @@ class CategoryControllerIT {
     @Test
     void whenGetAtBasePath_ThenInvokeGetAllMethodAndProcessResponse() throws Exception {
         final String responseBody = loadJson("get_list.json", getClass());
-        when(mockService.getAllInWindow(WINDOW_SIZE, WINDOW_INDEX)).thenReturn(List.of(makeTestCategory()));
+        when(mockService.getAllInWindow(anyInt(), anyInt())).thenReturn(List.of(makeTestCategory()));
         when(mockMapper.mapToDto(anyList())).thenReturn(List.of(makeTestCategoryDto()));
 
         mvc.perform(get(BASE_PATH)
@@ -83,15 +84,13 @@ class CategoryControllerIT {
                         content().json(responseBody, true));
 
         inOrder.verify(mockService).getAllInWindow(WINDOW_SIZE, WINDOW_INDEX);
-        inOrder.verify(mockMapper).mapToDto(argThat((List<Category> categories) ->
-                contains(samePropertyValuesAs(makeTestCategory())).matches(categories)));
+        inOrder.verify(mockMapper).mapToDto(refContains(makeTestCategory()));
     }
 
     @Test
     void whenGetAtBasePathWithoutParams_ThenInvokeGetAllMethodWithDefaultParams() throws Exception {
         final String responseBody = loadJson("get_list_with_default_params.json", getClass());
-        when(mockService.getAllInWindow(DEFAULT_WINDOW_SIZE, DEFAULT_WINDOW_INDEX))
-                .thenReturn(List.of(makeTestCategory()));
+        when(mockService.getAllInWindow(anyInt(), anyInt())).thenReturn(List.of(makeTestCategory()));
         when(mockMapper.mapToDto(anyList())).thenReturn(List.of(makeTestCategoryDto()));
 
         mvc.perform(get(BASE_PATH)
@@ -103,8 +102,7 @@ class CategoryControllerIT {
                         content().json(responseBody, true));
 
         inOrder.verify(mockService).getAllInWindow(DEFAULT_WINDOW_SIZE, DEFAULT_WINDOW_INDEX);
-        inOrder.verify(mockMapper).mapToDto(argThat((List<Category> categories) ->
-                contains(samePropertyValuesAs(makeTestCategory())).matches(categories)));
+        inOrder.verify(mockMapper).mapToDto(refContains(makeTestCategory()));
     }
 
     @Test
@@ -125,7 +123,7 @@ class CategoryControllerIT {
     @Test
     void whenGetAtBasePathWithId_ThenInvokeGetMethodAndProcessResponse() throws Exception {
         final String responseBody = loadJson("get_single.json", getClass());
-        when(mockService.getById(CATEGORY_ID)).thenReturn(makeTestCategory());
+        when(mockService.getById(anyLong())).thenReturn(makeTestCategory());
         when(mockMapper.mapToDto(any(Category.class))).thenReturn(makeTestCategoryDto());
 
         mvc.perform(get(BASE_PATH + "/" + CATEGORY_ID)
@@ -137,7 +135,6 @@ class CategoryControllerIT {
                         content().json(responseBody, true));
 
         inOrder.verify(mockService).getById(CATEGORY_ID);
-        inOrder.verify(mockMapper).mapToDto(argThat((Category category) ->
-                samePropertyValuesAs(makeTestCategory()).matches(category)));
+        inOrder.verify(mockMapper).mapToDto(refEq(makeTestCategory()));
     }
 }

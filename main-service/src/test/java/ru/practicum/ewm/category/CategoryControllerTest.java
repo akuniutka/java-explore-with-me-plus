@@ -14,15 +14,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.samePropertyValuesAs;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.when;
 import static ru.practicum.ewm.category.TestModels.CATEGORY_ID;
 import static ru.practicum.ewm.category.TestModels.makeTestCategory;
 import static ru.practicum.ewm.category.TestModels.makeTestCategoryDto;
 import static ru.practicum.ewm.common.CommonUtils.assertLogs;
+import static ru.practicum.ewm.common.CommonUtils.refContains;
 
 class CategoryControllerTest extends AbstractControllerTest {
 
@@ -61,14 +63,13 @@ class CategoryControllerTest extends AbstractControllerTest {
     @Test
     void whenGetAllCategories_ThenPassWindowParamsToServiceAndMapServiceResponseToDtosAndReturnItAndLog()
             throws Exception {
-        when(mockService.getAllInWindow(WINDOW_SIZE, WINDOW_INDEX)).thenReturn(List.of(makeTestCategory()));
+        when(mockService.getAllInWindow(anyInt(), anyInt())).thenReturn(List.of(makeTestCategory()));
         when(mockMapper.mapToDto(anyList())).thenReturn(List.of(makeTestCategoryDto()));
 
         final List<CategoryDto> categoryDtos = controller.getAll(FROM, SIZE, mockHttpRequest);
 
         inOrder.verify(mockService).getAllInWindow(WINDOW_SIZE, WINDOW_INDEX);
-        inOrder.verify(mockMapper).mapToDto(argThat((List<Category> categories) ->
-                contains(samePropertyValuesAs(makeTestCategory())).matches(categories)));
+        inOrder.verify(mockMapper).mapToDto(refContains(makeTestCategory()));
         assertThat(categoryDtos, contains(makeTestCategoryDto()));
         assertLogs(logListener.getEvents(), "get_list.json", getClass());
     }
@@ -76,7 +77,7 @@ class CategoryControllerTest extends AbstractControllerTest {
     @Test
     void whenGetAllCategoriesAndListIsEmpty_ThenPassWindowParamsToServiceAndMapServiceResponseToDtosAndReturnItAndLog()
             throws Exception {
-        when(mockService.getAllInWindow(WINDOW_SIZE, WINDOW_INDEX)).thenReturn(List.of());
+        when(mockService.getAllInWindow(anyInt(), anyInt())).thenReturn(List.of());
         when(mockMapper.mapToDto(anyList())).thenReturn(List.of());
 
         final List<CategoryDto> categoryDtos = controller.getAll(FROM, SIZE, mockHttpRequest);
@@ -89,14 +90,13 @@ class CategoryControllerTest extends AbstractControllerTest {
 
     @Test
     void whenGetCategoryById_ThenPassIdToServiceAndMapServiceResponseToDtoAndReturnItAndLog() throws Exception {
-        when(mockService.getById(CATEGORY_ID)).thenReturn(makeTestCategory());
+        when(mockService.getById(anyLong())).thenReturn(makeTestCategory());
         when(mockMapper.mapToDto(any(Category.class))).thenReturn(makeTestCategoryDto());
 
         final CategoryDto categoryDto = controller.get(CATEGORY_ID, mockHttpRequest);
 
         inOrder.verify(mockService).getById(CATEGORY_ID);
-        inOrder.verify(mockMapper).mapToDto(argThat((Category category) ->
-                samePropertyValuesAs(makeTestCategory()).matches(category)));
+        inOrder.verify(mockMapper).mapToDto(refEq(makeTestCategory()));
         assertThat(categoryDto, equalTo(makeTestCategoryDto()));
         assertLogs(logListener.getEvents(), "get_single.json", getClass());
     }
