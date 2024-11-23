@@ -1,18 +1,15 @@
-package ru.practicum.ewm.event;
+package ru.practicum.ewm.request;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.common.HttpRequestResponseLogger;
-import ru.practicum.ewm.request.RequestDto;
 
 import java.util.List;
 
@@ -21,13 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 class EventRequestController extends HttpRequestResponseLogger {
 
-    private final EventService events;
-    private final EventRequestDtoValidatorExtension eventRequestDtoValidatorExtension;
-
-    @InitBinder("updateEventRequestStatusDto")
-    void initBinder(final WebDataBinder binder) {
-        binder.addValidators(eventRequestDtoValidatorExtension);
-    }
+    private final RequestService requestService;
 
     @GetMapping
     List<RequestDto> getRequests(
@@ -35,7 +26,7 @@ class EventRequestController extends HttpRequestResponseLogger {
             @PathVariable final long eventId,
             final HttpServletRequest httpRequest) {
         logHttpRequest(httpRequest);
-        final List<RequestDto> dtos = events.getRequests(userId, eventId);
+        final List<RequestDto> dtos = requestService.getRequests(userId, eventId);
         logHttpResponse(httpRequest, dtos);
         return dtos;
     }
@@ -47,7 +38,7 @@ class EventRequestController extends HttpRequestResponseLogger {
             @RequestBody @Valid final UpdateEventRequestStatusDto updateDto,
             final HttpServletRequest httpRequest) {
         logHttpRequest(httpRequest, updateDto);
-        final EventRequestStatusDto dto = events.processRequests(eventId, updateDto, userId);
+        final EventRequestStatusDto dto = requestService.processRequests(eventId, updateDto, userId);
         logHttpResponse(httpRequest, dto);
         return dto;
     }
