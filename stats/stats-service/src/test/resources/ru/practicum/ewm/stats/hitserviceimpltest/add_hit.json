@@ -1,0 +1,6 @@
+[
+  {
+    "level": "INFO",
+    "message": "Added hit with id = 1: Hit(id=1, app=mainService, uri=endpointA, ip=127.0.0.1, timestamp=2000-01-31T13:30:55)"
+  }
+]

@@ -9,8 +9,8 @@ import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-@Builder(toBuilder = true)
-public record EndpointHitDto(
+@Builder
+public record NewHitDto(
 
         @NotBlank
         @Size(max = 255)
@@ -27,6 +27,7 @@ public record EndpointHitDto(
         @NotNull
         @PastOrPresent
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-        LocalDateTime timestamp) {
+        LocalDateTime timestamp
+) {
 
 }

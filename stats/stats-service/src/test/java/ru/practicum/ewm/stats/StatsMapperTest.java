@@ -9,11 +9,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
-import static ru.practicum.ewm.stats.TestUtils.deepEqualTo;
-import static ru.practicum.ewm.stats.TestUtils.makeTestEndpointHit;
-import static ru.practicum.ewm.stats.TestUtils.makeTestEndpointHitDto;
-import static ru.practicum.ewm.stats.TestUtils.makeTestViewStats;
-import static ru.practicum.ewm.stats.TestUtils.makeTestViewStatsDto;
+import static ru.practicum.ewm.stats.TestModels.makeTestViewStats;
+import static ru.practicum.ewm.stats.TestModels.makeTestViewStatsDto;
 
 class StatsMapperTest {
 
@@ -25,50 +22,34 @@ class StatsMapperTest {
     }
 
     @Test
-    void testMapToEndpointHit() {
+    void whenMapToDtoAndViewStatsIsNotNull_ThenReturnSingleDto() {
 
-        final EndpointHit actual = mapper.mapToEndpointHit(makeTestEndpointHitDto());
+        final ViewStatsDto dto = mapper.mapToDto(makeTestViewStats());
 
-        assertThat(actual, deepEqualTo(makeTestEndpointHit().withNoId()));
+        assertThat(dto, equalTo(makeTestViewStatsDto()));
     }
 
     @Test
-    void testMapToEndpointHitWhenNull() {
+    void whenMapToDtoAndViewStatsIsNull_ThenReturnNull() {
 
-        final EndpointHit actual = mapper.mapToEndpointHit(null);
+        final ViewStatsDto dto = mapper.mapToDto((ViewStats) null);
 
-        assertThat(actual, nullValue());
+        assertThat(dto, nullValue());
     }
 
     @Test
-    void testMapToDtoWhenSingleViewStats() {
+    void whenMapToDtoAndViewStatsListIsNotNull_ThenReturnDtoList() {
 
-        final ViewStatsDto actual = mapper.mapToDto(makeTestViewStats());
+        final List<ViewStatsDto> dtos = mapper.mapToDto(List.of(makeTestViewStats()));
 
-        assertThat(actual, equalTo(makeTestViewStatsDto()));
+        assertThat(dtos, contains(makeTestViewStatsDto()));
     }
 
     @Test
-    void testMapToDtoWhenSingleViewStatsNull() {
+    void whenMapToDtoAndViewStatsListIsNull_ThenReturnNull() {
 
-        final ViewStatsDto actual = mapper.mapToDto((ViewStats) null);
+        final List<ViewStatsDto> dtos = mapper.mapToDto((List<ViewStats>) null);
 
-        assertThat(actual, nullValue());
-    }
-
-    @Test
-    void testMapToDtoWhenViewStatsList() {
-
-        final List<ViewStatsDto> actual = mapper.mapToDto(List.of(makeTestViewStats()));
-
-        assertThat(actual, contains(makeTestViewStatsDto()));
-    }
-
-    @Test
-    void testMapToDtoWhenViewStatsListNull() {
-
-        final List<ViewStatsDto> actual = mapper.mapToDto((List<ViewStats>) null);
-
-        assertThat(actual, nullValue());
+        assertThat(dtos, nullValue());
     }
 }

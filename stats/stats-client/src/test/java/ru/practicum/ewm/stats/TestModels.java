@@ -10,6 +10,7 @@ final class TestModels {
     static final String SCHEMA = "http";
     static final String HOST = "localhost";
     static final int PORT = 9090;
+    static final long HIT_ID = 1L;
     static final String APP = "mainService";
     static final String ENDPOINT = "endpointA";
     static final String IP = "127.0.0.1";
@@ -21,8 +22,18 @@ final class TestModels {
     private TestModels() {
     }
 
-    static EndpointHitDto makeTestEndpointHitDto() {
-        return EndpointHitDto.builder()
+    static NewHitDto makeTestNewHitDto() {
+        return NewHitDto.builder()
+                .app(APP)
+                .uri(ENDPOINT)
+                .ip(IP)
+                .timestamp(TIMESTAMP)
+                .build();
+    }
+
+    static HitDto makeTestHitDto() {
+        return HitDto.builder()
+                .id(HIT_ID)
                 .app(APP)
                 .uri(ENDPOINT)
                 .ip(IP)

@@ -8,3 +8,5 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+logging.level:
+  ru.practicum.ewm: TRACE
