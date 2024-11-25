@@ -13,3 +13,5 @@ ewm:
   timeout:
     admin: PT1H
     user: PT2H
+logging.level:
+  ru.practicum.ewm: TRACE

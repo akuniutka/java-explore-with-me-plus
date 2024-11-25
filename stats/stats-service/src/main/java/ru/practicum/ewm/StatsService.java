@@ -7,10 +7,10 @@ import org.springframework.context.annotation.Bean;
 import java.time.Clock;
 
 @SpringBootApplication
-public class StatsServer {
+public class StatsService {
 
     public static void main(String[] args) {
-        SpringApplication.run(StatsServer.class, args);
+        SpringApplication.run(StatsService.class, args);
     }
 
     @Bean

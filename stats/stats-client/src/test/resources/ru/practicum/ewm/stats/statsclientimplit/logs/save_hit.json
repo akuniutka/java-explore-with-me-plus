@@ -1,6 +1,10 @@
 [
   {
-    "level": "INFO",
-    "message": "Отправляем запрос на сохранение статистики: EndpointHitDto[app=mainService, uri=endpointA, ip=127.0.0.1, timestamp=2000-01-31T13:30:55]"
+    "level": "DEBUG",
+    "message": "Sending new hit data to stats service: NewHitDto[app=mainService, uri=endpointA, ip=127.0.0.1, timestamp=2000-01-31T13:30:55]"
+  },
+  {
+    "level": "DEBUG",
+    "message": "Received response from stats service: HitDto[id=1, app=mainService, uri=endpointA, ip=127.0.0.1, timestamp=2000-01-31T13:30:55]"
   }
 ]

@@ -5,3 +5,5 @@ spring:
     url: jdbc:h2:mem:ewm
     username: ewm
     password: ewm
+logging.level:
+  ru.practicum.ewm: DEBUG
