@@ -5,7 +5,12 @@ spring:
     url: jdbc:h2:mem:ewm
     username: ewm
     password: ewm
-  jpa.hibernate.ddl-auto: validate
+  jpa:
+    hibernate.ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
 stats:
   server:
     uri: http://localhost:9090
@@ -15,3 +20,4 @@ ewm:
     user: PT2H
 logging.level:
   ru.practicum.ewm: TRACE
+  org.hibernate.orm.jdbc.bind: TRACE
