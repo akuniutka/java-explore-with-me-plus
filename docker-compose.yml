@@ -20,6 +20,8 @@ services:
       - SPRING_DATASOURCE_USERNAME=ewm
       - SPRING_DATASOURCE_PASSWORD=ewm
       - STATS_SERVER_URI=http://stats-service:9090
+    volumes:
+      - explore-with-me-logs:/logs:rw
     healthcheck:
       test: "wget -T5 -qO- http://localhost:8080/actuator/health | grep UP || exit 1"
       interval: 15s
@@ -73,3 +75,52 @@ services:
       timeout: 5s
       interval: 5s
       retries: 10
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.2.0
+    ports:
+      - "9200:9200"
+    environment:
+      - "discovery.type=single-node"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data:rw
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.2.0
+    ports:
+      - "25826:25826"
+      - "5044:5044"
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+    restart: on-failure
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.2.0
+    ports:
+      - "5601:5601"
+    restart: on-failure
+    depends_on:
+      - elasticsearch
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.2.0
+    volumes:
+      - ./filebeat/filebeat.yaml:/usr/share/filebeat/filebeat.yml:ro
+      - filebeat-data:/usr/share/filebeat/data:rw
+      - explore-with-me-logs:/logs:ro
+    restart: on-failure
+    depends_on:
+      - logstash
+
+volumes:
+
+  explore-with-me-logs:
+    driver: local
+
+  elasticsearch-data:
+    driver: local
+
+  filebeat-data:
+    driver: local
