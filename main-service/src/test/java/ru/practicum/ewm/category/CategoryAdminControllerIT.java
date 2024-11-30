@@ -11,7 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.ewm.common.ClockConfig;
+import ru.practicum.ewm.configuration.ClockConfig;
 
 import java.nio.charset.StandardCharsets;
 

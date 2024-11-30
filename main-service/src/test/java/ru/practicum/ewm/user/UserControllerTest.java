@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.ewm.configuration.ClockConfig;
 import ru.practicum.ewm.exception.NotFoundException;
 
 import java.util.List;
@@ -34,6 +36,7 @@ import static ru.practicum.ewm.user.UserTestUtil.USER_NAME_1;
 import static ru.practicum.ewm.user.UserTestUtil.USER_NAME_2;
 
 @WebMvcTest(controllers = UserController.class)
+@ContextConfiguration(classes = ClockConfig.class)
 public class UserControllerTest {
 
     @Autowired

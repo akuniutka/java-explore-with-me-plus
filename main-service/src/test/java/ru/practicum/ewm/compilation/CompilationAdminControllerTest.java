@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.ewm.configuration.ClockConfig;
 import ru.practicum.ewm.exception.NotFoundException;
 
 import java.time.format.DateTimeFormatter;
@@ -42,6 +44,7 @@ import static ru.practicum.ewm.event.EventTestUtil.EVENT_TITLE_1;
 import static ru.practicum.ewm.user.UserTestUtil.USER_NAME_1;
 
 @WebMvcTest(controllers = CompilationAdminController.class)
+@ContextConfiguration(classes = ClockConfig.class)
 public class CompilationAdminControllerTest {
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
