@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.ewm.configuration.ClockConfig;
 import ru.practicum.ewm.exception.NotFoundException;
 
 import java.time.format.DateTimeFormatter;
@@ -31,6 +33,7 @@ import static ru.practicum.ewm.user.UserTestUtil.PAGEABLE;
 import static ru.practicum.ewm.user.UserTestUtil.USER_NAME_1;
 
 @WebMvcTest(controllers = CompilationPublicController.class)
+@ContextConfiguration(classes = ClockConfig.class)
 public class CompilationPublicControllerTest {
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
