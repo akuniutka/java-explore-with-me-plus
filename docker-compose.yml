@@ -55,6 +55,8 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/ewm_stats
       - SPRING_DATASOURCE_USERNAME=stats
       - SPRING_DATASOURCE_PASSWORD=stats
+    volumes:
+      - explore-with-me-logs:/logs:rw
     healthcheck:
       test: "wget -T5 -qO- http://localhost:9090/actuator/health | grep UP || exit 1"
       interval: 15s
