@@ -4,11 +4,6 @@ filebeat.inputs:
     paths:
       - "/logs/*"
 
-processors:
-  - decode_json_fields:
-      fields: ["message"]
-      target: ""
-
 output.logstash:
   hosts: "logstash:5044"
 
