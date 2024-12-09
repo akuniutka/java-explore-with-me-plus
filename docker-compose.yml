@@ -127,7 +127,7 @@ services:
       timeout: 5s
       retries: 120
 
-  elasticsearch:
+  stats-server:
     depends_on:
       elasticsearch-setup:
         condition: service_healthy
@@ -168,7 +168,7 @@ services:
 
   kibana:
     depends_on:
-      elasticsearch:
+      stats-server:
         condition: service_healthy
     image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
     volumes:
@@ -186,7 +186,7 @@ services:
 
   logstash:
     depends_on:
-      elasticsearch:
+      stats-server:
         condition: service_healthy
     image: docker.elastic.co/logstash/logstash:${STACK_VERSION}
     user: root
