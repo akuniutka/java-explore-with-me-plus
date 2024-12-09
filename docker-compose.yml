@@ -127,7 +127,7 @@ services:
       timeout: 5s
       retries: 120
 
-  stats-server:
+  elasticsearch:
     depends_on:
       elasticsearch-setup:
         condition: service_healthy
@@ -142,7 +142,6 @@ services:
       - cluster.name=${CLUSTER_NAME}
       - cluster.initial_master_nodes=elasticsearch
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-#      - bootstrap.memory_lock=true
       - xpack.security.enabled=true
       - xpack.security.http.ssl.enabled=true
       - xpack.security.http.ssl.key=certs/elasticsearch/elasticsearch.key
@@ -168,7 +167,7 @@ services:
 
   kibana:
     depends_on:
-      stats-server:
+      elasticsearch:
         condition: service_healthy
     image: docker.elastic.co/kibana/kibana:${STACK_VERSION}
     volumes:
@@ -186,7 +185,7 @@ services:
 
   logstash:
     depends_on:
-      stats-server:
+      elasticsearch:
         condition: service_healthy
     image: docker.elastic.co/logstash/logstash:${STACK_VERSION}
     user: root
